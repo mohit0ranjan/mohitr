@@ -14,13 +14,13 @@ export async function createGalleryItem(formData: FormData) {
     const rawData = {
         title: formData.get("title"),
         imageUrl: formData.get("imageUrl"),
-        isVisible: formData.get("isVisible") === "on",
+        isVisible: formData.get("isVisible") === "on" || formData.get("isVisible") === "true",
     };
 
     const result = gallerySchema.safeParse(rawData);
 
     if (!result.success) {
-        return { success: false, error: result.error.errors[0].message };
+        return { success: false, error: result.error.issues[0].message };
     }
 
     try {
@@ -37,6 +37,45 @@ export async function createGalleryItem(formData: FormData) {
         return { success: false, error: "Database error" };
     }
 }
+
+export async function saveGalleryItem(formData: FormData) {
+    "use server";
+
+    const id = formData.get("id") as string;
+    const isNew = id === "new";
+
+    const rawData = {
+        title: formData.get("title") || formData.get("caption"),
+        imageUrl: formData.get("imageUrl") || formData.get("url"),
+        isVisible: true, // Default to true for now
+    };
+
+    const result = gallerySchema.safeParse(rawData);
+    if (!result.success) {
+        console.error("Validation failed:", result.error);
+        return { success: false, error: "Validation failed" };
+    }
+
+    try {
+        if (isNew) {
+            await prisma.galleryItem.create({ data: result.data });
+        } else {
+            await prisma.galleryItem.update({
+                where: { id },
+                data: result.data
+            });
+        }
+        revalidatePath("/admin/gallery");
+        revalidatePath("/");
+        return { success: true };
+    } catch (error) {
+        console.error("Failed to save gallery item:", error);
+        return { success: false, error: "Database error" };
+    }
+}
+
+// Alias for compatibility if needed
+export const saveImage = saveGalleryItem;
 
 export async function deleteGalleryItem(id: string) {
     "use server";
