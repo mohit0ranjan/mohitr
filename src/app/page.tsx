@@ -1,65 +1,115 @@
-import Image from "next/image";
+import { prisma } from "@/lib/prisma";
+import { format } from "date-fns";
 
-export default function Home() {
+import Hero from "@/components/sections/Hero";
+import IdentitySignal from "@/components/sections/IdentitySignal";
+import FeaturedWork from "@/components/sections/FeaturedWork";
+import OpportunityStream from "@/components/sections/OpportunityStream";
+import Workbench from "@/components/sections/Workbench";
+import Journey from "@/components/sections/Journey";
+import WritingStudio from "@/components/sections/WritingStudio";
+import Gallery from "@/components/sections/Gallery";
+
+
+export const dynamic = 'force-dynamic'
+
+export default async function Home() {
+  // Fetch data
+  const [posts, projects, opportunities, techTools, timelineItems, galleryItems] = await Promise.all([
+    prisma.post.findMany({
+      where: { isPublished: true },
+      orderBy: { publishedAt: 'desc' },
+      take: 4
+    }),
+    prisma.project.findMany({
+      where: { isFeatured: true },
+      orderBy: { createdAt: 'desc' },
+      take: 4
+    }),
+    prisma.opportunity.findMany({
+      where: { status: "Active" },
+      orderBy: { dateShared: 'desc' },
+      take: 5
+    }),
+    prisma.techTool.findMany({
+      where: { isVisible: true },
+      orderBy: { order: 'asc' }
+    }),
+    prisma.timelineEntry.findMany({
+      where: { isVisible: true },
+      orderBy: { order: 'desc' },
+      take: 6
+    }),
+    prisma.galleryItem.findMany({
+      where: { isVisible: true },
+      orderBy: { date: 'desc' },
+      take: 8
+    })
+  ]);
+
+  // Format Data
+  const formattedPosts = posts.map(post => ({
+    id: post.slug,
+    date: post.publishedAt ? format(post.publishedAt, "MMM dd, yyyy") : "",
+    title: post.title,
+    excerpt: post.excerpt || undefined
+  }));
+
+  const formattedProjects = projects.map(proj => ({
+    id: proj.id,
+    title: proj.name,
+    category: proj.category,
+    description: proj.description,
+    href: proj.liveUrl || proj.githubUrl || "#",
+    tech: proj.techStack ? proj.techStack.split(',').map(t => t.trim()) : []
+  }));
+
+  const formattedOpportunities = opportunities.map(job => ({
+    id: job.id,
+    role: job.role,
+    company: job.company,
+    type: job.type,
+    location: job.location || "Remote",
+    link: job.url || "#",
+    isNew: true, // Could compare dateShared difference
+    dateShared: job.dateShared
+  }));
+
+  // Fix: Gallery expects Date object, and imageUrl
+  const formattedGalleryItems = galleryItems.map(item => ({
+    id: item.id,
+    title: item.title,
+    imageUrl: item.imageUrl,
+    date: item.date
+  }));
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+    <main className="min-h-screen bg-[#030303] text-foreground selection:bg-indigo-500/30">
+
+      {/* 1. SCENE I: THE CINEMATIC OPENING */}
+      <Hero />
+
+      {/* 2. SCENE II: THE PHILOSOPHY (SIGNAL) */}
+      <IdentitySignal />
+
+      {/* 3. SCENE III: THE OUTPUT (WORK) */}
+      <FeaturedWork projects={formattedProjects} />
+
+      {/* 4. SCENE IV: THE SIGNALS (OPPORTUNITIES) */}
+      <OpportunityStream items={formattedOpportunities} />
+
+      {/* 5. SCENE V: THE TOOLS (WORKBENCH) */}
+      <Workbench tools={techTools} />
+
+      {/* 6. SCENE VI: THE PATH (JOURNEY) */}
+      <Journey items={timelineItems} />
+
+      {/* 7. SCENE VII: THE THOUGHTS (WRITING) */}
+      {/* 8. SCENE VIII: THOUGHTS (WRITING) */}
+      <WritingStudio posts={formattedPosts} />
+
+
+
+    </main>
   );
 }

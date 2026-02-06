@@ -1,0 +1,141 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Post {
+  id          String    @id @default(uuid())
+  title       String
+  slug        String    @unique
+  content     String
+  excerpt     String?
+  publishedAt DateTime?
+  isPublished Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Project {
+  id          String   @id @default(uuid())
+  name        String
+  description String
+  techStack   String
+  liveUrl     String?
+  githubUrl   String?
+  imageUrl    String?
+  category    String   @default("Personal")
+  isFeatured  Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  detail      String?
+}
+
+model Opportunity {
+  id          String   @id @default(uuid())
+  role        String
+  company     String
+  location    String?
+  type        String
+  description String?
+  url         String?
+  dateShared  DateTime @default(now())
+  status      String   @default("Active")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model DevTool {
+  id               String   @id @default(uuid())
+  name             String
+  category         String
+  icon             String?
+  shortDescription String?
+  liveUrl          String?
+  isFeatured       Boolean  @default(false)
+  isPublished      Boolean  @default(true)
+  updatedAt        DateTime @updatedAt
+  githubUrl        String?
+  toolType         String?
+}
+
+model TechTool {
+  id          String   @id @default(uuid())
+  name        String
+  category    String
+  icon        String?
+  proficiency Int?
+  isVisible   Boolean  @default(true)
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model TimelineEntry {
+  id          String   @id @default(uuid())
+  year        String
+  title       String
+  type        String
+  description String
+  order       Int      @default(0)
+  isVisible   Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model FocusPoint {
+  id          String   @id @default(uuid())
+  title       String
+  description String?
+  isActive    Boolean  @default(true)
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Capability {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  icon        String
+  isVisible   Boolean  @default(true)
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model TickerUpdate {
+  id        String   @id @default(uuid())
+  content   String
+  type      String
+  url       String?
+  icon      String?
+  isActive  Boolean  @default(true)
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model GalleryItem {
+  id          String   @id @default(uuid())
+  title       String
+  description String?
+  imageUrl    String
+  date        DateTime @default(now())
+  isVisible   Boolean  @default(true)
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  name      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

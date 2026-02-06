@@ -1,0 +1,54 @@
+import NextAuth from "next-auth"
+import Credentials from "next-auth/providers/credentials"
+import { z } from "zod"
+import bcrypt from "bcryptjs"
+import { prisma } from "@/lib/prisma"
+
+export const { auth, handlers, signIn, signOut } = NextAuth({
+    providers: [
+        Credentials({
+            credentials: {
+                email: { label: "Email", type: "email" },
+                password: { label: "Password", type: "password" }
+            },
+            authorize: async (credentials) => {
+                const parsedCredentials = z
+                    .object({ email: z.string().email(), password: z.string().min(1) })
+                    .safeParse(credentials)
+
+                if (parsedCredentials.success) {
+                    const { email, password } = parsedCredentials.data
+                    const user = await prisma.user.findUnique({
+                        where: { email },
+                    })
+
+                    if (!user || !user.password) return null
+
+                    const passwordsMatch = await bcrypt.compare(password, user.password)
+                    if (passwordsMatch) return user
+                }
+
+                return null
+            },
+        }),
+    ],
+    pages: {
+        signIn: '/login',
+    },
+    callbacks: {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        async session({ session, token }: any) {
+            if (token?.sub && session.user) {
+                session.user.id = token.sub
+            }
+            return session
+        },
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        async jwt({ token }: any) {
+            return token
+        }
+    },
+    session: {
+        strategy: "jwt"
+    }
+})
