@@ -4,7 +4,8 @@ import { FadeIn, FadeInStagger } from "@/components/ui/motion";
 import { prisma } from "@/lib/prisma";
 import { format } from "date-fns";
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 3600
+
 
 export default async function BlogIndex() {
     const posts = await prisma.post.findMany({

@@ -46,5 +46,6 @@ export async function saveOpportunity(formData: FormData) {
     }
 
     revalidatePath('/admin/opportunities')
+    revalidatePath('/')
     redirect('/admin/opportunities')
 }

@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { format } from "date-fns";
 
 import Hero from "@/components/sections/Hero";
+import ImpactMetrics from "@/components/sections/ImpactMetrics";
 import IdentitySignal from "@/components/sections/IdentitySignal";
 import FeaturedWork from "@/components/sections/FeaturedWork";
 import OpportunityStream from "@/components/sections/OpportunityStream";
@@ -9,13 +10,32 @@ import Workbench from "@/components/sections/Workbench";
 import Journey from "@/components/sections/Journey";
 import WritingStudio from "@/components/sections/WritingStudio";
 import Gallery from "@/components/sections/Gallery";
+import CurrentFocus from "@/components/sections/CurrentFocus";
+import Capabilities from "@/components/sections/Capabilities";
 
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 3600 // Revalidate at least every hour
+
 
 export default async function Home() {
   // Fetch data
-  const [posts, projects, opportunities, techTools, timelineItems, galleryItems] = await Promise.all([
+  const [
+    posts,
+    projects,
+    opportunities,
+    techTools,
+    timelineItems,
+    galleryItems,
+    focusPoints,
+    capabilities,
+    heroContentRaw,
+    settingsRaw,
+    latestTicker,
+    postsCount,
+    projectsCount,
+    toolsCount,
+    opportunitiesCount
+  ] = await Promise.all([
     prisma.post.findMany({
       where: { isPublished: true },
       orderBy: { publishedAt: 'desc' },
@@ -37,15 +57,38 @@ export default async function Home() {
     }),
     prisma.timelineEntry.findMany({
       where: { isVisible: true },
-      orderBy: { order: 'desc' },
-      take: 6
+      orderBy: { order: 'desc' }, // Order by order field
+      take: 10
     }),
     prisma.galleryItem.findMany({
       where: { isVisible: true },
-      orderBy: { date: 'desc' },
-      take: 8
-    })
+      orderBy: { order: 'asc' }, // Use order for gallery
+      take: 10
+    }),
+    prisma.focusPoint.findMany({
+      where: { isActive: true },
+      orderBy: { order: 'asc' }
+    }),
+    prisma.capability.findMany({
+      where: { isVisible: true },
+      orderBy: { order: 'asc' }
+    }),
+    prisma.pageContent.findUnique({ where: { section: 'hero' } }),
+    prisma.pageContent.findUnique({ where: { section: 'settings' } }),
+    prisma.tickerUpdate.findFirst({
+      where: { isActive: true },
+      orderBy: { createdAt: 'desc' }
+    }),
+    // IMPACT METRICS COUNTS
+    prisma.post.count({ where: { isPublished: true } }),
+    prisma.project.count(),
+    prisma.devTool.count({ where: { isPublished: true } }),
+    prisma.opportunity.count()
   ]);
+
+  // Parse JSON content safely
+  const heroContent = heroContentRaw?.content ? JSON.parse(heroContentRaw.content) : null;
+  const settings = settingsRaw?.content ? JSON.parse(settingsRaw.content) : null;
 
   // Format Data
   const formattedPosts = posts.map(post => ({
@@ -84,32 +127,50 @@ export default async function Home() {
     date: item.date
   }));
 
+  const metricsCounts = {
+    posts: postsCount,
+    projects: projectsCount,
+    tools: toolsCount,
+    opportunities: opportunitiesCount
+  };
+
   return (
     <main className="min-h-screen bg-[#030303] text-foreground selection:bg-indigo-500/30">
 
       {/* 1. SCENE I: THE CINEMATIC OPENING */}
-      <Hero />
+      <Hero
+        content={heroContent}
+        settings={settings}
+        ticker={latestTicker}
+      />
 
-      {/* 2. SCENE II: THE PHILOSOPHY (SIGNAL) */}
+      {/* 2. SCENE II: IMPACT METRICS & PHILOSOPHY */}
+      <ImpactMetrics counts={metricsCounts} />
       <IdentitySignal />
 
-      {/* 3. SCENE III: THE OUTPUT (WORK) */}
+      {/* 3. SCENE III: CURRENT FOCUS */}
+      <CurrentFocus points={focusPoints} />
+
+      {/* 4. SCENE IV: THE OUTPUT (WORK) */}
       <FeaturedWork projects={formattedProjects} />
 
-      {/* 4. SCENE IV: THE SIGNALS (OPPORTUNITIES) */}
+      {/* 5. SCENE V: THE SIGNALS (OPPORTUNITIES) */}
       <OpportunityStream items={formattedOpportunities} />
 
-      {/* 5. SCENE V: THE TOOLS (WORKBENCH) */}
+      {/* 6. SCENE VI: THE TOOLS (WORKBENCH) */}
       <Workbench tools={techTools} />
 
-      {/* 6. SCENE VI: THE PATH (JOURNEY) */}
+      {/* 7. SCENE VII: CAPABILITIES */}
+      <Capabilities items={capabilities} />
+
+      {/* 8. SCENE VIII: THE PATH (JOURNEY) */}
       <Journey items={timelineItems} />
 
-      {/* 7. SCENE VII: THE THOUGHTS (WRITING) */}
-      {/* 8. SCENE VIII: THOUGHTS (WRITING) */}
+      {/* 9. SCENE IX: LIFE (GALLERY) */}
+      <Gallery items={formattedGalleryItems} />
+
+      {/* 10. SCENE X: THE THOUGHTS (WRITING) */}
       <WritingStudio posts={formattedPosts} />
-
-
 
     </main>
   );

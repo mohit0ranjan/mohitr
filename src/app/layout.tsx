@@ -3,9 +3,11 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import JsonLd from "@/components/seo/JsonLd";
 import Navbar from "@/components/ui/navbar";
-import { getSortedPostsData } from "@/lib/posts";
 import PageTracker from "@/components/analytics/PageTracker";
 import Footer from "@/components/ui/Footer";
+import { format } from "date-fns";
+import { prisma } from "@/lib/prisma";
+import { GalleryItem } from "@prisma/client";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -23,7 +25,7 @@ export const metadata: Metadata = {
     template: "%s | Mohit Ranjan"
   },
   description: "Portfolio of Mohit Ranjan, a Computer Science student at NIT Jalandhar. Building full-stack applications, developer tools, and sharing career opportunities.",
-  keywords: ["Mohit Ranjan", "NIT Jalandhar", "Software Engineer", "React", "Next.js", "Portfolio", "Student Developer", "Mohit Ranjan NITJ", "Mohit Ranjan developer", "Mohit Ranjan computer science student"],
+  keywords: ["Mohit Ranjan", "NIT Jalandhar", "Software Engineer", "React", "Next.js", "Portfolio", "Student Developer", "Mohit Ranjan NITJ", "Mohit Ranjan developer"],
   authors: [{ name: "Mohit Ranjan" }],
   creator: "Mohit Ranjan",
   openGraph: {
@@ -44,17 +46,23 @@ export const metadata: Metadata = {
   },
 };
 
-import { prisma } from "@/lib/prisma";
-import { GalleryItem } from "@prisma/client";
-
-// ... existing imports
-
 export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const allPosts = getSortedPostsData();
+  // Fetch actual posts from DB for Navbar
+  const postsRaw = await prisma.post.findMany({
+    where: { isPublished: true },
+    orderBy: { publishedAt: 'desc' },
+    select: { title: true, slug: true, publishedAt: true }
+  });
+
+  const allPosts = postsRaw.map(p => ({
+    id: p.slug,
+    title: p.title,
+    date: p.publishedAt ? format(p.publishedAt, 'MMM dd, yyyy') : ''
+  }));
 
   // Fetch gallery for global footer
   let galleryItems: GalleryItem[] = [];

@@ -87,12 +87,12 @@ export default function Navbar({ posts = [] }: NavbarProps) {
                 <div className="hidden md:flex items-center gap-4">
                     <SearchModal posts={posts} />
                     <a
-                        href="https://github.com/mohit"
+                        href="https://github.com/mohit0ranjan"
                         target="_blank"
                         className="text-xs font-mono bg-white/5 border border-white/10 px-4 py-2 rounded-full hover:bg-white/10 hover:border-white/20 transition-all duration-300 flex items-center gap-2 group"
                     >
                         <span className="text-neutral-500 group-hover:text-neutral-300 transition-opacity">gh/</span>
-                        <span className="font-bold text-white">mohit</span>
+                        <span className="font-bold text-white">mohit0ranjan</span>
                     </a>
                 </div>
 

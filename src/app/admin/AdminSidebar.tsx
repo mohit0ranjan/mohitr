@@ -16,7 +16,8 @@ import {
     Zap,
     Radio,
     LogOut,
-    ExternalLink
+    ExternalLink,
+    LayoutTemplate
 } from "lucide-react"
 
 export function AdminSidebar() {
@@ -27,6 +28,7 @@ export function AdminSidebar() {
             label: "Content",
             items: [
                 { href: "/admin", label: "Overview", icon: LayoutDashboard },
+                { href: "/admin/hero", label: "Hero Section", icon: LayoutTemplate },
                 { href: "/admin/posts", label: "Blog Posts", icon: FileText },
                 { href: "/admin/projects", label: "Projects", icon: FolderKanban },
                 { href: "/admin/gallery", label: "Gallery", icon: ImageIcon },
@@ -69,8 +71,8 @@ export function AdminSidebar() {
                                         key={link.href}
                                         href={link.href}
                                         className={`group flex items-center gap-3 px-4 py-2.5 text-sm rounded-lg transition-all duration-200 border border-transparent ${isActive
-                                                ? "bg-white/5 text-white border-white/5 shadow-sm"
-                                                : "text-neutral-400 hover:text-white hover:bg-white/5"
+                                            ? "bg-white/5 text-white border-white/5 shadow-sm"
+                                            : "text-neutral-400 hover:text-white hover:bg-white/5"
                                             }`}
                                     >
                                         <Icon size={16} className={`transition-colors ${isActive ? "text-indigo-400" : "text-neutral-500 group-hover:text-indigo-400"}`} />

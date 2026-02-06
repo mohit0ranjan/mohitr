@@ -54,5 +54,7 @@ export async function savePost(formData: FormData) {
     }
 
     revalidatePath('/admin/posts')
+    revalidatePath('/blog')
+    revalidatePath('/')
     redirect('/admin/posts')
 }

@@ -64,19 +64,19 @@ const ConnectAction = ({ href, label, icon, primary, accentColor }: ConnectActio
 export default function ConnectSection() {
     const socialLinks = [
         {
-            href: "https://linkedin.com/in/mohit",
+            href: "https://www.linkedin.com/in/itsmohitr/",
             label: "Follow on LinkedIn",
             icon: <Linkedin size={20} />,
             accentColor: "#0077B5",
         },
         {
-            href: "https://github.com/mohit",
+            href: "https://github.com/mohit0ranjan",
             label: "View GitHub",
             icon: <Github size={20} />,
             accentColor: "#ffffff",
         },
         {
-            href: "https://leetcode.com/mohit",
+            href: "https://leetcode.com",
             label: "LeetCode Profile",
             icon: <Code2 size={20} />,
             accentColor: "#FFA116",

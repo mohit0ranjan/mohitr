@@ -7,7 +7,8 @@ import { format } from "date-fns";
 import { notFound } from "next/navigation";
 import { markdownToHtml } from "@/lib/markdown";
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 3600
+
 
 // export async function generateStaticParams() {
 //     const posts = await prisma.post.findMany({ select: { slug: true } });

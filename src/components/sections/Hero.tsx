@@ -5,7 +5,24 @@ import { ArrowDown, Github, Linkedin, BadgeCheck, MapPin } from "lucide-react";
 import Link from "next/link";
 import { FadeIn, FadeInStagger } from "@/components/ui/motion";
 
-export default function Hero() {
+interface HeroProps {
+    content?: {
+        heading?: string;
+        subheading?: string;
+        status?: string;
+    };
+    settings?: {
+        linkedin?: string;
+        github?: string;
+        resume?: string;
+    };
+    ticker?: {
+        content: string;
+        type: string;
+    } | null;
+}
+
+export default function Hero({ content, settings, ticker }: HeroProps) {
     return (
         <section className="min-h-screen w-full relative flex items-start md:items-center justify-center overflow-hidden bg-[#030303] text-white pt-32 md:pt-0">
 
@@ -34,10 +51,17 @@ export default function Hero() {
 
                 <FadeInStagger className="w-full md:w-2/3">
 
-                    {/* Top Top Context */}
-                    <div className="flex items-center gap-4 text-xs font-mono uppercase tracking-widest text-neutral-500 mb-8">
-                        <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                        <span>Online • Based in India</span>
+                    {/* Live Status Ticker */}
+                    <div className="flex items-center gap-3 mb-8">
+                        <div className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm">
+                            <span className="relative flex h-2 w-2">
+                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                                <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                            </span>
+                            <span className="text-xs font-mono uppercase tracking-widest text-neutral-300">
+                                {ticker?.content || content?.status || "Online • Based in India"}
+                            </span>
+                        </div>
                     </div>
 
                     {/* Central Statement - The "Hook" */}
@@ -45,19 +69,27 @@ export default function Hero() {
 
                         <FadeIn delay={0.2} className="relative z-10">
                             <h1 className="text-6xl md:text-8xl lg:text-9xl font-bold tracking-tighter leading-[0.9] text-white">
-                                <span className="block hover:text-transparent hover:bg-clip-text hover:bg-gradient-to-r hover:from-white hover:to-neutral-500 transition-all duration-700 cursor-default">System</span>
-                                <span className="block pl-4 md:pl-24 text-neutral-600">Architect</span>
+                                <span className="block hover:text-transparent hover:bg-clip-text hover:bg-gradient-to-r hover:from-white hover:to-neutral-500 transition-all duration-700 cursor-default">
+                                    {content?.heading?.split(" ")[0] || "System"}
+                                </span>
+                                <span className="block pl-4 md:pl-24 text-neutral-600">
+                                    {content?.heading?.split(" ")[1] || "Architect"}
+                                </span>
                                 <span className="block text-right pr-4 md:pr-12 bg-clip-text text-transparent bg-gradient-to-b from-white to-neutral-500">
-                                    & Maker
+                                    & {content?.heading?.split(" ")[3] || "Maker"}
                                 </span>
                             </h1>
                         </FadeIn>
 
                         <FadeIn delay={0.4} className="max-w-xl md:ml-auto md:mr-12 mt-8 md:mt-12">
                             <p className="text-xl md:text-2xl font-light text-neutral-400 leading-relaxed text-right md:text-left">
-                                I design <span className="text-white">autonomous agents</span> and engineer <span className="text-white">distributed systems</span>.
-                                <br className="hidden md:block" />
-                                Shaping digital experiences at <span className="border-b border-indigo-500/30 text-indigo-200">NIT Jalandhar</span>.
+                                {content?.subheading || (
+                                    <>
+                                        I design <span className="text-white">autonomous agents</span> and engineer <span className="text-white">distributed systems</span>.
+                                        <br className="hidden md:block" />
+                                        Shaping digital experiences at <span className="border-b border-indigo-500/30 text-indigo-200">NIT Jalandhar</span>.
+                                    </>
+                                )}
                             </p>
                         </FadeIn>
 
@@ -109,17 +141,19 @@ export default function Hero() {
                             </div>
                             <div className="flex justify-between items-center py-2 border-b border-white/5">
                                 <span className="text-xs text-neutral-500 font-mono uppercase">Status</span>
-                                <span className="text-xs px-2 py-0.5 rounded bg-green-500/10 text-green-400 border border-green-500/20">Open to Work</span>
+                                <span className="text-xs px-2 py-0.5 rounded bg-green-500/10 text-green-400 border border-green-500/20">
+                                    {ticker?.type === 'Status' ? 'Open to Work' : 'Online'}
+                                </span>
                             </div>
                         </div>
 
                         {/* Social Footer */}
                         <div className="flex justify-between items-center pt-2">
                             <div className="flex gap-4">
-                                <Link href="https://github.com" className="text-neutral-400 hover:text-white transition-colors"><Github size={18} /></Link>
-                                <Link href="https://linkedin.com" className="text-neutral-400 hover:text-white transition-colors"><Linkedin size={18} /></Link>
+                                <Link href={settings?.github || "https://github.com/mohit0ranjan"} className="text-neutral-400 hover:text-white transition-colors"><Github size={18} /></Link>
+                                <Link href={settings?.linkedin || "https://www.linkedin.com/in/itsmohitr/"} className="text-neutral-400 hover:text-white transition-colors"><Linkedin size={18} /></Link>
                             </div>
-                            <Link href="/resume.pdf" className="text-xs font-mono uppercase text-indigo-400 hover:text-white transition-colors">
+                            <Link href={settings?.resume || "/resume.pdf"} className="text-xs font-mono uppercase text-indigo-400 hover:text-white transition-colors">
                                 View Resume &rarr;&rarr;
                             </Link>
                         </div>
@@ -132,7 +166,7 @@ export default function Hero() {
                     initial={{ opacity: 0, y: -20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 1.5, duration: 1 }}
-                    className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 cursor-pointer group"
+                    className="absolute bottom-2 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 cursor-pointer group"
                     onClick={() => {
                         const nextSection = document.getElementById('context');
                         nextSection?.scrollIntoView({ behavior: 'smooth' });

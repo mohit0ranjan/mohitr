@@ -126,8 +126,8 @@ export default function Footer({ galleryItems = [] }: { galleryItems?: GalleryIt
                     </div>
 
                     <div className="flex gap-8">
-                        <Link href="https://github.com" className="text-neutral-400 hover:text-white transition-colors text-sm uppercase tracking-wider font-mono">Github</Link>
-                        <Link href="https://linkedin.com" className="text-neutral-400 hover:text-white transition-colors text-sm uppercase tracking-wider font-mono">LinkedIn</Link>
+                        <Link href="https://github.com/mohit0ranjan" className="text-neutral-400 hover:text-white transition-colors text-sm uppercase tracking-wider font-mono">Github</Link>
+                        <Link href="https://www.linkedin.com/in/itsmohitr/" className="text-neutral-400 hover:text-white transition-colors text-sm uppercase tracking-wider font-mono">LinkedIn</Link>
                         <Link href="https://twitter.com" className="text-neutral-400 hover:text-white transition-colors text-sm uppercase tracking-wider font-mono">Twitter</Link>
                     </div>
 

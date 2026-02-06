@@ -48,5 +48,6 @@ export async function saveProject(formData: FormData) {
     }
 
     revalidatePath('/admin/projects')
+    revalidatePath('/')
     redirect('/admin/projects')
 }
