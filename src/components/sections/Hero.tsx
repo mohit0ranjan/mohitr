@@ -7,7 +7,7 @@ import { FadeIn, FadeInStagger } from "@/components/ui/motion";
 
 export default function Hero() {
     return (
-        <section className="h-screen w-full relative flex items-center justify-center overflow-hidden bg-[#030303] text-white">
+        <section className="min-h-screen w-full relative flex items-start md:items-center justify-center overflow-hidden bg-[#030303] text-white pt-32 md:pt-0">
 
             {/* 1. Dynamic Background - Atmospheric & Deep */}
             <div className="absolute inset-0 z-0">
