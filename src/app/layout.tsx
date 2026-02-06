@@ -45,6 +45,7 @@ export const metadata: Metadata = {
 };
 
 import { prisma } from "@/lib/prisma";
+import { GalleryItem } from "@prisma/client";
 
 // ... existing imports
 
@@ -56,11 +57,17 @@ export default async function RootLayout({
   const allPosts = getSortedPostsData();
 
   // Fetch gallery for global footer
-  const galleryItems = await prisma.galleryItem.findMany({
-    where: { isVisible: true },
-    orderBy: { date: 'desc' },
-    take: 4
-  });
+  let galleryItems: GalleryItem[] = [];
+  try {
+    galleryItems = await prisma.galleryItem.findMany({
+      where: { isVisible: true },
+      orderBy: { date: 'desc' },
+      take: 4
+    });
+  } catch (e) {
+    console.error("Failed to fetch gallery items for footer:", e);
+    // Return empty array so build doesn't fail
+  }
 
   const formattedGalleryItems = galleryItems.map(item => ({
     id: item.id,
