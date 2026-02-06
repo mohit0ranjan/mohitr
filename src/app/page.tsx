@@ -72,7 +72,8 @@ export default async function Home() {
     location: job.location || "Remote",
     link: job.url || "#",
     isNew: true, // Could compare dateShared difference
-    dateShared: job.dateShared
+    dateShared: job.dateShared,
+    isFeatured: job.isFeatured
   }));
 
   // Fix: Gallery expects Date object, and imageUrl

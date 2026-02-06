@@ -5,15 +5,20 @@ import { revalidatePath } from "next/cache"
 import { redirect } from "next/navigation"
 
 export async function saveTool(formData: FormData) {
-    const id = formData.get("id") as string
-    const name = formData.get("name") as string
-    const slug = formData.get("slug") as string
-    const shortDescription = formData.get("shortDescription") as string
-    const longDescription = formData.get("longDescription") as string
-    const category = formData.get("category") as string
-    const toolType = formData.get("toolType") as string
-    const liveUrl = formData.get("liveUrl") as string
-    const githubUrl = formData.get("githubUrl") as string
+    const id = formData.get("id")?.toString() || ""
+    const name = formData.get("name")?.toString() || ""
+    const slug = formData.get("slug")?.toString() || ""
+    const shortDescription = formData.get("shortDescription")?.toString() || ""
+    const longDescription = formData.get("longDescription")?.toString() || ""
+    const category = formData.get("category")?.toString() || ""
+    const toolType = formData.get("toolType")?.toString() || ""
+
+    const liveUrlRaw = formData.get("liveUrl")?.toString()
+    const liveUrl = liveUrlRaw || null
+
+    const githubUrlRaw = formData.get("githubUrl")?.toString()
+    const githubUrl = githubUrlRaw || null
+
     const isFeatured = formData.get("isFeatured") === "on"
     const isPublished = formData.get("isPublished") === "on"
 
@@ -24,8 +29,8 @@ export async function saveTool(formData: FormData) {
         longDescription,
         category,
         toolType,
-        liveUrl: liveUrl || null,
-        githubUrl: githubUrl || null,
+        liveUrl,
+        githubUrl,
         isFeatured,
         isPublished
     }
@@ -41,7 +46,7 @@ export async function saveTool(formData: FormData) {
         }
     } catch (e) {
         console.error("Failed to save tool", e)
-        return { error: "Failed to save" }
+        return
     }
 
     revalidatePath("/admin/tools")
@@ -58,6 +63,5 @@ export async function deleteTool(id: string) {
         revalidatePath("/")
     } catch (e) {
         console.error("Failed to delete tool", e)
-        return { error: "Failed to delete" }
     }
 }

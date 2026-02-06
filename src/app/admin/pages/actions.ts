@@ -5,8 +5,8 @@ import { revalidatePath } from "next/cache"
 import { redirect } from "next/navigation"
 
 export async function savePageContent(formData: FormData) {
-    const section = formData.get("section") as string
-    const content = formData.get("content") as string // JSON string
+    const section = formData.get("section")?.toString() || ""
+    const content = formData.get("content")?.toString() || "" // JSON string
 
     // In a real app we might parse separate fields, but for flexibility we'll just store JSON
     // Or we could have dynamic fields based on section. 

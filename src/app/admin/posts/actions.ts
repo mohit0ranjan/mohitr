@@ -17,13 +17,13 @@ export async function deletePost(id: string) {
 }
 
 export async function savePost(formData: FormData) {
-    const id = formData.get("id") as string
-    const title = formData.get("title") as string
-    const content = formData.get("content") as string
-    const excerpt = formData.get("excerpt") as string
-    const tags = formData.get("tags") as string
+    const id = formData.get("id")?.toString() || ""
+    const title = formData.get("title")?.toString() || ""
+    const content = formData.get("content")?.toString() || ""
+    const excerpt = formData.get("excerpt")?.toString() || ""
+    const tags = formData.get("tags")?.toString() || ""
     const isPublished = formData.get("isPublished") === "on"
-    let slug = formData.get("slug") as string
+    let slug = formData.get("slug")?.toString() || ""
 
     if (!slug) {
         slug = title.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '')
@@ -50,8 +50,7 @@ export async function savePost(formData: FormData) {
         }
     } catch (e) {
         console.error("Failed to save post", e)
-        // In real app, return error state
-        return { error: "Failed to save" }
+        return
     }
 
     revalidatePath('/admin/posts')

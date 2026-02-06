@@ -16,11 +16,11 @@ export default async function EditTechStack({ params }: { params: Promise<{ id: 
                 <input type="hidden" name="id" value={id} />
                 <div className="flex flex-col gap-2">
                     <label>Name</label>
-                    <input name="name" defaultValue={item?.name} className="p-2 rounded bg-neutral-900 border border-neutral-800" required />
+                    <input name="name" defaultValue={item?.name ?? ""} className="p-2 rounded bg-neutral-900 border border-neutral-800" required />
                 </div>
                 <div className="flex flex-col gap-2">
                     <label>Category</label>
-                    <select name="category" defaultValue={item?.category || "Languages"} className="p-2 rounded bg-neutral-900 border border-neutral-800">
+                    <select name="category" defaultValue={item?.category ?? "Languages"} className="p-2 rounded bg-neutral-900 border border-neutral-800">
                         <option>Languages</option>
                         <option>Frameworks</option>
                         <option>Tools & Infra</option>
@@ -28,11 +28,11 @@ export default async function EditTechStack({ params }: { params: Promise<{ id: 
                 </div>
                 <div className="flex flex-col gap-2">
                     <label>Icon (Lucide name)</label>
-                    <input name="icon" defaultValue={item?.icon || ""} className="p-2 rounded bg-neutral-900 border border-neutral-800" />
+                    <input name="icon" defaultValue={item?.icon ?? ""} className="p-2 rounded bg-neutral-900 border border-neutral-800" />
                 </div>
                 <div className="flex flex-col gap-2">
                     <label>Order</label>
-                    <input name="order" type="number" defaultValue={item?.order || 0} className="p-2 rounded bg-neutral-900 border border-neutral-800" />
+                    <input name="order" type="number" defaultValue={item?.order ?? 0} className="p-2 rounded bg-neutral-900 border border-neutral-800" />
                 </div>
                 <div className="flex items-center gap-2">
                     <input type="checkbox" name="isVisible" defaultChecked={item?.isVisible ?? true} />

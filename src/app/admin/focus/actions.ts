@@ -5,10 +5,11 @@ import { revalidatePath } from "next/cache"
 import { redirect } from "next/navigation"
 
 export async function saveFocusPoint(formData: FormData) {
-    const id = formData.get("id") as string
-    const title = formData.get("title") as string
-    const description = formData.get("description") as string
-    const order = parseInt(formData.get("order") as string || "0")
+    const id = formData.get("id")?.toString() || ""
+    const title = formData.get("title")?.toString() || ""
+    const description = formData.get("description")?.toString() || ""
+    const orderStr = formData.get("order")?.toString() || "0"
+    const order = parseInt(orderStr)
     const isActive = formData.get("isActive") === "on"
 
     const data = { title, description, order, isActive }
@@ -20,7 +21,7 @@ export async function saveFocusPoint(formData: FormData) {
             await prisma.focusPoint.update({ where: { id }, data })
         }
     } catch (e) {
-        return { error: "Failed to save" }
+        console.error("Save error:", e)
     }
 
     revalidatePath("/admin/focus")
@@ -34,6 +35,6 @@ export async function deleteFocusPoint(id: string) {
         revalidatePath("/admin/focus")
         revalidatePath("/")
     } catch (e) {
-        return { error: "Failed to delete" }
+        console.error("Delete error:", e)
     }
 }

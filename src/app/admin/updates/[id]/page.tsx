@@ -16,7 +16,7 @@ export default async function EditTicker({ params }: { params: Promise<{ id: str
                 <input type="hidden" name="id" value={id} />
                 <div className="flex flex-col gap-2">
                     <label>Content (Short text)</label>
-                    <input name="content" defaultValue={item?.content} className="p-2 rounded bg-neutral-900 border border-neutral-800" required />
+                    <input name="content" defaultValue={item?.content ?? ""} className="p-2 rounded bg-neutral-900 border border-neutral-800" required />
                 </div>
                 <div className="flex flex-col gap-2">
                     <label>Type</label>
@@ -30,11 +30,11 @@ export default async function EditTicker({ params }: { params: Promise<{ id: str
                 </div>
                 <div className="flex flex-col gap-2">
                     <label>Link (Optional)</label>
-                    <input name="link" defaultValue={item?.link || ""} className="p-2 rounded bg-neutral-900 border border-neutral-800" />
+                    <input name="url" defaultValue={item?.url ?? ""} className="p-2 rounded bg-neutral-900 border border-neutral-800" />
                 </div>
                 <div className="flex flex-col gap-2">
                     <label>Order</label>
-                    <input name="order" type="number" defaultValue={item?.order || 0} className="p-2 rounded bg-neutral-900 border border-neutral-800" />
+                    <input name="order" type="number" defaultValue={item?.order ?? 0} className="p-2 rounded bg-neutral-900 border border-neutral-800" />
                 </div>
                 <div className="flex items-center gap-2">
                     <input type="checkbox" name="isActive" defaultChecked={item?.isActive ?? true} />

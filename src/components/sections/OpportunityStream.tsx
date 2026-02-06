@@ -12,6 +12,7 @@ interface Opportunity {
     link: string;
     isNew: boolean;
     dateShared: Date;
+    isFeatured?: boolean;
 }
 
 export default function OpportunityStream({ items }: { items: Opportunity[] }) {

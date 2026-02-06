@@ -16,15 +16,15 @@ export default async function EditFocus({ params }: { params: Promise<{ id: stri
                 <input type="hidden" name="id" value={id} />
                 <div className="flex flex-col gap-2">
                     <label>Title</label>
-                    <input name="title" defaultValue={item?.title} className="p-2 rounded bg-neutral-900 border border-neutral-800" required />
+                    <input name="title" defaultValue={item?.title ?? ""} className="p-2 rounded bg-neutral-900 border border-neutral-800" required />
                 </div>
                 <div className="flex flex-col gap-2">
                     <label>Description (Optional help text)</label>
-                    <textarea name="description" defaultValue={item?.description || ""} className="p-2 rounded bg-neutral-900 border border-neutral-800 h-24" />
+                    <textarea name="description" defaultValue={item?.description ?? ""} className="p-2 rounded bg-neutral-900 border border-neutral-800 h-24" />
                 </div>
                 <div className="flex flex-col gap-2">
                     <label>Order</label>
-                    <input name="order" type="number" defaultValue={item?.order || 0} className="p-2 rounded bg-neutral-900 border border-neutral-800" />
+                    <input name="order" type="number" defaultValue={item?.order ?? 0} className="p-2 rounded bg-neutral-900 border border-neutral-800" />
                 </div>
                 <div className="flex items-center gap-2">
                     <input type="checkbox" name="isActive" defaultChecked={item?.isActive ?? true} />

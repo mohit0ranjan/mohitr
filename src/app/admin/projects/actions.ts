@@ -15,14 +15,14 @@ export async function deleteProject(id: string) {
 }
 
 export async function saveProject(formData: FormData) {
-    const id = formData.get("id") as string
-    const name = formData.get("name") as string
-    const description = formData.get("description") as string
-    const detail = formData.get("detail") as string
-    const techStack = formData.get("techStack") as string
-    const category = formData.get("category") as string
-    const liveUrl = formData.get("liveUrl") as string
-    const githubUrl = formData.get("githubUrl") as string
+    const id = formData.get("id")?.toString() || ""
+    const name = formData.get("name")?.toString() || ""
+    const description = formData.get("description")?.toString() || ""
+    const detail = formData.get("detail")?.toString() || ""
+    const techStack = formData.get("techStack")?.toString() || ""
+    const category = formData.get("category")?.toString() || ""
+    const liveUrl = formData.get("liveUrl")?.toString() || ""
+    const githubUrl = formData.get("githubUrl")?.toString() || ""
     const isFeatured = formData.get("isFeatured") === "on"
 
     const data = {
@@ -31,8 +31,8 @@ export async function saveProject(formData: FormData) {
         detail,
         techStack,
         category,
-        liveUrl: liveUrl || "",
-        githubUrl: githubUrl || "",
+        liveUrl,
+        githubUrl,
         isFeatured
     }
 

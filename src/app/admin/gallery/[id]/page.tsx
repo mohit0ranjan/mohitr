@@ -24,19 +24,19 @@ export default async function GalleryEditorPage({ params }: { params: Promise<{ 
 
                 <div className="space-y-2">
                     <label className="block text-sm font-medium text-neutral-300">Image URL</label>
-                    <input name="imageUrl" type="url" defaultValue={img?.imageUrl} required placeholder="https://..." className="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500/50 transition-all font-mono text-sm" />
+                    <input name="imageUrl" type="url" defaultValue={img?.imageUrl ?? ""} required placeholder="https://..." className="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500/50 transition-all font-mono text-sm" />
                     <p className="text-xs text-neutral-500">Direct link to image (Unsplash, Cloudinary, etc)</p>
                 </div>
 
                 <div className="space-y-2">
                     <label className="block text-sm font-medium text-neutral-300">Title / Caption</label>
-                    <textarea name="title" defaultValue={img?.title || ""} required rows={3} className="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500/50 transition-all" />
+                    <textarea name="title" defaultValue={img?.title ?? ""} required rows={3} className="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500/50 transition-all" />
                 </div>
 
                 <div className="grid grid-cols-2 gap-6">
                     <div className="space-y-2">
                         <label className="block text-sm font-medium text-neutral-300">Order Priority</label>
-                        <input name="order" type="number" defaultValue={img?.order || 0} className="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500/50 transition-all" />
+                        <input name="order" type="number" defaultValue={img?.order ?? 0} className="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500/50 transition-all" />
                     </div>
                 </div>
 

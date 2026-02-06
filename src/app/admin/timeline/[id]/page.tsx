@@ -17,7 +17,7 @@ export default async function EditTimeline({ params }: { params: Promise<{ id: s
                 <div className="grid grid-cols-2 gap-4">
                     <div className="flex flex-col gap-2">
                         <label>Year</label>
-                        <input name="year" defaultValue={item?.year} className="p-2 rounded bg-neutral-900 border border-neutral-800" required />
+                        <input name="year" defaultValue={item?.year ?? ""} className="p-2 rounded bg-neutral-900 border border-neutral-800" required />
                     </div>
                     <div className="flex flex-col gap-2">
                         <label>Type</label>
@@ -31,15 +31,15 @@ export default async function EditTimeline({ params }: { params: Promise<{ id: s
                 </div>
                 <div className="flex flex-col gap-2">
                     <label>Title</label>
-                    <input name="title" defaultValue={item?.title} className="p-2 rounded bg-neutral-900 border border-neutral-800" required />
+                    <input name="title" defaultValue={item?.title ?? ""} className="p-2 rounded bg-neutral-900 border border-neutral-800" required />
                 </div>
                 <div className="flex flex-col gap-2">
                     <label>Description</label>
-                    <textarea name="description" defaultValue={item?.description} className="p-2 rounded bg-neutral-900 border border-neutral-800 h-24" required />
+                    <textarea name="description" defaultValue={item?.description ?? ""} className="p-2 rounded bg-neutral-900 border border-neutral-800 h-24" required />
                 </div>
                 <div className="flex flex-col gap-2">
                     <label>Order</label>
-                    <input name="order" type="number" defaultValue={item?.order || 0} className="p-2 rounded bg-neutral-900 border border-neutral-800" />
+                    <input name="order" type="number" defaultValue={item?.order ?? 0} className="p-2 rounded bg-neutral-900 border border-neutral-800" />
                 </div>
                 <button className="bg-white text-black px-4 py-2 rounded font-bold">Save</button>
             </form>

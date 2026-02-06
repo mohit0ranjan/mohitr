@@ -26,12 +26,12 @@ export default async function ProjectEditorPage({ params }: { params: Promise<{ 
                     <div className="space-y-6">
                         <div className="space-y-2">
                             <label className="block text-sm font-medium text-neutral-300">Project Name</label>
-                            <input name="name" defaultValue={project?.name} required className="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500/50 transition-all font-medium text-lg" />
+                            <input name="name" defaultValue={project?.name ?? ""} required className="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500/50 transition-all font-medium text-lg" />
                         </div>
 
                         <div className="space-y-2">
                             <label className="block text-sm font-medium text-neutral-300">Category</label>
-                            <select name="category" defaultValue={project?.category || "Web App"} className="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500/50 transition-all">
+                            <select name="category" defaultValue={project?.category ?? "Web App"} className="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500/50 transition-all">
                                 <option value="Web App">Web App</option>
                                 <option value="Tool">Tool</option>
                                 <option value="System">System</option>
@@ -42,7 +42,7 @@ export default async function ProjectEditorPage({ params }: { params: Promise<{ 
 
                         <div className="space-y-2">
                             <label className="block text-sm font-medium text-neutral-300">Short Description</label>
-                            <textarea name="description" defaultValue={project?.description} required rows={3} className="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500/50 transition-all" />
+                            <textarea name="description" defaultValue={project?.description ?? ""} required rows={3} className="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500/50 transition-all" />
                             <p className="text-xs text-neutral-500">Appears on cards</p>
                         </div>
                     </div>
@@ -50,22 +50,22 @@ export default async function ProjectEditorPage({ params }: { params: Promise<{ 
                     <div className="space-y-6">
                         <div className="space-y-2">
                             <label className="block text-sm font-medium text-neutral-300">Tech Stack</label>
-                            <input name="techStack" defaultValue={project?.techStack || ""} placeholder="Next.js, Tailwind, Prisma..." className="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500/50 transition-all" />
+                            <input name="techStack" defaultValue={project?.techStack ?? ""} placeholder="Next.js, Tailwind, Prisma..." className="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500/50 transition-all" />
                         </div>
 
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
                                 <label className="block text-sm font-medium text-neutral-300">Live URL</label>
-                                <input name="liveUrl" type="url" defaultValue={project?.liveUrl || ""} className="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500/50 transition-all" />
+                                <input name="liveUrl" type="url" defaultValue={project?.liveUrl ?? ""} className="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500/50 transition-all" />
                             </div>
                             <div className="space-y-2">
                                 <label className="block text-sm font-medium text-neutral-300">GitHub URL</label>
-                                <input name="githubUrl" type="url" defaultValue={project?.githubUrl || ""} className="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500/50 transition-all" />
+                                <input name="githubUrl" type="url" defaultValue={project?.githubUrl ?? ""} className="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500/50 transition-all" />
                             </div>
                         </div>
 
                         <div className="flex items-center gap-3 pt-4 p-4 border border-neutral-800 rounded-lg bg-neutral-900/30">
-                            <input type="checkbox" name="isFeatured" id="isFeatured" defaultChecked={project?.isFeatured} className="w-4 h-4 rounded border-neutral-800 bg-neutral-900 text-purple-600 focus:ring-purple-500/50" />
+                            <input type="checkbox" name="isFeatured" id="isFeatured" defaultChecked={project?.isFeatured ?? false} className="w-4 h-4 rounded border-neutral-800 bg-neutral-900 text-purple-600 focus:ring-purple-500/50" />
                             <label htmlFor="isFeatured" className="text-sm font-medium text-neutral-300">Feature this project</label>
                         </div>
                     </div>
@@ -73,7 +73,7 @@ export default async function ProjectEditorPage({ params }: { params: Promise<{ 
 
                 <div className="space-y-2">
                     <label className="block text-sm font-medium text-neutral-300">Detailed Content (Markdown)</label>
-                    <textarea name="detail" defaultValue={project?.detail || ""} rows={10} className="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500/50 transition-all font-mono text-sm" placeholder="# Detailed case study..." />
+                    <textarea name="detail" defaultValue={project?.detail ?? ""} rows={10} className="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500/50 transition-all font-mono text-sm" placeholder="# Detailed case study..." />
                 </div>
 
                 <div className="pt-4 border-t border-neutral-800">

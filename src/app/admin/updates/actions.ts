@@ -5,14 +5,16 @@ import { revalidatePath } from "next/cache"
 import { redirect } from "next/navigation"
 
 export async function saveTicker(formData: FormData) {
-    const id = formData.get("id") as string
-    const content = formData.get("content") as string
-    const type = formData.get("type") as string
-    const link = formData.get("link") as string
-    const order = parseInt(formData.get("order") as string || "0")
+    const id = formData.get("id")?.toString() || ""
+    const content = formData.get("content")?.toString() || ""
+    const type = formData.get("type")?.toString() || ""
+    const urlRaw = formData.get("url")?.toString()
+    const url = urlRaw || null
+    const orderStr = formData.get("order")?.toString() || "0"
+    const order = parseInt(orderStr)
     const isActive = formData.get("isActive") === "on"
 
-    const data = { content, type, link: link || null, order, isActive }
+    const data = { content, type, url, order, isActive }
 
     try {
         if (id === "new") {
@@ -21,7 +23,7 @@ export async function saveTicker(formData: FormData) {
             await prisma.tickerUpdate.update({ where: { id }, data })
         }
     } catch (e) {
-        return { error: "Failed to save" }
+        console.error("Save error:", e)
     }
 
     revalidatePath("/admin/updates")
@@ -35,6 +37,6 @@ export async function deleteTicker(id: string) {
         revalidatePath("/admin/updates")
         revalidatePath("/")
     } catch (e) {
-        return { error: "Failed to delete" }
+        console.error("Delete error:", e)
     }
 }

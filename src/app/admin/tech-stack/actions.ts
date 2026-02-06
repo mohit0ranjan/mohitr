@@ -5,11 +5,12 @@ import { revalidatePath } from "next/cache"
 import { redirect } from "next/navigation"
 
 export async function saveTechTool(formData: FormData) {
-    const id = formData.get("id") as string
-    const name = formData.get("name") as string
-    const category = formData.get("category") as string
-    const icon = formData.get("icon") as string
-    const order = parseInt(formData.get("order") as string || "0")
+    const id = formData.get("id")?.toString() || ""
+    const name = formData.get("name")?.toString() || ""
+    const category = formData.get("category")?.toString() || ""
+    const icon = formData.get("icon")?.toString() || ""
+    const orderStr = formData.get("order")?.toString() || "0"
+    const order = parseInt(orderStr)
     const isVisible = formData.get("isVisible") === "on"
 
     const data = { name, category, icon, order, isVisible }
@@ -21,7 +22,7 @@ export async function saveTechTool(formData: FormData) {
             await prisma.techTool.update({ where: { id }, data })
         }
     } catch (e) {
-        return { error: "Failed to save" }
+        console.error("Save error:", e)
     }
 
     revalidatePath("/admin/tech-stack")
@@ -35,6 +36,6 @@ export async function deleteTechTool(id: string) {
         revalidatePath("/admin/tech-stack")
         revalidatePath("/")
     } catch (e) {
-        return { error: "Failed to delete" }
+        console.error("Delete error:", e)
     }
 }

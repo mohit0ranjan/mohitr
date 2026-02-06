@@ -15,20 +15,20 @@ export async function deleteOpportunity(id: string) {
 }
 
 export async function saveOpportunity(formData: FormData) {
-    const id = formData.get("id") as string
-    const role = formData.get("role") as string
-    const company = formData.get("company") as string
-    const description = formData.get("description") as string
-    const url = formData.get("url") as string
-    const type = formData.get("type") as string
-    const status = formData.get("status") as string
+    const id = formData.get("id")?.toString() || ""
+    const role = formData.get("role")?.toString() || ""
+    const company = formData.get("company")?.toString() || ""
+    const description = formData.get("description")?.toString() || ""
+    const url = formData.get("url")?.toString() || ""
+    const type = formData.get("type")?.toString() || ""
+    const status = formData.get("status")?.toString() || ""
     const isFeatured = formData.get("isFeatured") === "on"
 
     const data = {
         role,
         company,
         description,
-        url: url || "",
+        url,
         type,
         status,
         isFeatured

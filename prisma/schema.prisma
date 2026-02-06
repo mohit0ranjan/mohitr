@@ -15,6 +15,7 @@ model Post {
   excerpt     String?
   publishedAt DateTime?
   isPublished Boolean   @default(false)
+  tags        String?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 }
@@ -44,6 +45,7 @@ model Opportunity {
   url         String?
   dateShared  DateTime @default(now())
   status      String   @default("Active")
+  isFeatured  Boolean  @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
@@ -51,9 +53,11 @@ model Opportunity {
 model DevTool {
   id               String   @id @default(uuid())
   name             String
+  slug             String   @unique
   category         String
   icon             String?
   shortDescription String?
+  longDescription  String?
   liveUrl          String?
   isFeatured       Boolean  @default(false)
   isPublished      Boolean  @default(true)
@@ -136,6 +140,14 @@ model User {
   email     String   @unique
   password  String
   name      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model PageContent {
+  id        String   @id @default(uuid())
+  section   String   @unique
+  content   String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

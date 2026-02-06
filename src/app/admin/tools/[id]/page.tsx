@@ -33,7 +33,7 @@ export default async function ToolEditor({ params }: { params: Promise<{ id: str
                         <input
                             type="text"
                             name="name"
-                            defaultValue={tool?.name}
+                            defaultValue={tool?.name ?? ""}
                             required
                             className="w-full bg-neutral-950 border border-neutral-800 rounded-lg px-4 py-2 focus:ring-2 focus:ring-purple-500 outline-none"
                             placeholder="e.g. JWT Decoder"
@@ -44,7 +44,7 @@ export default async function ToolEditor({ params }: { params: Promise<{ id: str
                         <input
                             type="text"
                             name="slug"
-                            defaultValue={tool?.slug}
+                            defaultValue={tool?.slug ?? ""}
                             required
                             className="w-full bg-neutral-950 border border-neutral-800 rounded-lg px-4 py-2 focus:ring-2 focus:ring-purple-500 outline-none"
                             placeholder="e.g. jwt-decoder"
@@ -57,7 +57,7 @@ export default async function ToolEditor({ params }: { params: Promise<{ id: str
                     <input
                         type="text"
                         name="shortDescription"
-                        defaultValue={tool?.shortDescription}
+                        defaultValue={tool?.shortDescription ?? ""}
                         required
                         className="w-full bg-neutral-950 border border-neutral-800 rounded-lg px-4 py-2 focus:ring-2 focus:ring-purple-500 outline-none"
                         placeholder="Brief summary of what this tool does..."
@@ -69,7 +69,7 @@ export default async function ToolEditor({ params }: { params: Promise<{ id: str
                         <label className="text-sm font-medium text-neutral-300">Category</label>
                         <select
                             name="category"
-                            defaultValue={tool?.category || "Web Utilities"}
+                            defaultValue={tool?.category ?? "Web Utilities"}
                             className="w-full bg-neutral-950 border border-neutral-800 rounded-lg px-4 py-2 focus:ring-2 focus:ring-purple-500 outline-none"
                         >
                             <option>Security</option>
@@ -83,7 +83,7 @@ export default async function ToolEditor({ params }: { params: Promise<{ id: str
                         <label className="text-sm font-medium text-neutral-300">Tool Type</label>
                         <select
                             name="toolType"
-                            defaultValue={tool?.toolType || "Online Tool"}
+                            defaultValue={tool?.toolType ?? "Online Tool"}
                             className="w-full bg-neutral-950 border border-neutral-800 rounded-lg px-4 py-2 focus:ring-2 focus:ring-purple-500 outline-none"
                         >
                             <option>Online Tool</option>
@@ -99,7 +99,7 @@ export default async function ToolEditor({ params }: { params: Promise<{ id: str
                         <input
                             type="url"
                             name="liveUrl"
-                            defaultValue={tool?.liveUrl || ""}
+                            defaultValue={tool?.liveUrl ?? ""}
                             className="w-full bg-neutral-950 border border-neutral-800 rounded-lg px-4 py-2 focus:ring-2 focus:ring-purple-500 outline-none"
                             placeholder="https://..."
                         />
@@ -109,7 +109,7 @@ export default async function ToolEditor({ params }: { params: Promise<{ id: str
                         <input
                             type="url"
                             name="githubUrl"
-                            defaultValue={tool?.githubUrl || ""}
+                            defaultValue={tool?.githubUrl ?? ""}
                             className="w-full bg-neutral-950 border border-neutral-800 rounded-lg px-4 py-2 focus:ring-2 focus:ring-purple-500 outline-none"
                             placeholder="https://github.com/..."
                         />
@@ -120,7 +120,7 @@ export default async function ToolEditor({ params }: { params: Promise<{ id: str
                     <label className="text-sm font-medium text-neutral-300">Long Description (Markdown)</label>
                     <textarea
                         name="longDescription"
-                        defaultValue={tool?.longDescription || ""}
+                        defaultValue={tool?.longDescription ?? ""}
                         rows={8}
                         className="w-full bg-neutral-950 border border-neutral-800 rounded-lg px-4 py-2 focus:ring-2 focus:ring-purple-500 outline-none font-mono text-sm"
                         placeholder="# Detailed Guide..."
@@ -132,7 +132,7 @@ export default async function ToolEditor({ params }: { params: Promise<{ id: str
                         <input
                             type="checkbox"
                             name="isPublished"
-                            defaultChecked={tool?.isPublished}
+                            defaultChecked={tool?.isPublished ?? false}
                             className="w-4 h-4 rounded border-neutral-700 bg-neutral-900 text-purple-500 focus:ring-purple-500"
                         />
                         <span className="text-sm font-medium text-neutral-300">Published</span>
@@ -142,7 +142,7 @@ export default async function ToolEditor({ params }: { params: Promise<{ id: str
                         <input
                             type="checkbox"
                             name="isFeatured"
-                            defaultChecked={tool?.isFeatured}
+                            defaultChecked={tool?.isFeatured ?? false}
                             className="w-4 h-4 rounded border-neutral-700 bg-neutral-900 text-purple-500 focus:ring-purple-500"
                         />
                         <span className="text-sm font-medium text-neutral-300">Featured</span>

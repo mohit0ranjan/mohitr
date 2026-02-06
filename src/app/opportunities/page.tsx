@@ -20,7 +20,7 @@ export default async function OpportunitiesPage() {
         role: job.role,
         company: job.company,
         type: job.type,
-        description: job.description,
+        description: job.description || "",
         url: job.url || "#",
         date: job.dateShared,
         isFeatured: job.isFeatured
