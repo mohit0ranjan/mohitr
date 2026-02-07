@@ -1,21 +1,8 @@
 import { prisma } from "@/lib/prisma";
 import { format } from "date-fns";
-
-import Hero from "@/components/sections/Hero";
-import ImpactMetrics from "@/components/sections/ImpactMetrics";
-import IdentitySignal from "@/components/sections/IdentitySignal";
-import FeaturedWork from "@/components/sections/FeaturedWork";
-import OpportunityStream from "@/components/sections/OpportunityStream";
-import Workbench from "@/components/sections/Workbench";
-import Journey from "@/components/sections/Journey";
-import WritingStudio from "@/components/sections/WritingStudio";
-import Gallery from "@/components/sections/Gallery";
-import CurrentFocus from "@/components/sections/CurrentFocus";
-import Capabilities from "@/components/sections/Capabilities";
-
+import HomeScene from "@/components/home/HomeScene";
 
 export const revalidate = 3600 // Revalidate at least every hour
-
 
 export default async function Home() {
   // Fetch data
@@ -136,43 +123,19 @@ export default async function Home() {
   };
 
   return (
-    <main className="min-h-screen bg-[#030303] text-foreground selection:bg-indigo-500/30">
-
-      {/* 1. SCENE I: THE CINEMATIC OPENING */}
-      <Hero
-        content={heroContent}
-        settings={settings}
-        ticker={latestTicker}
-      />
-
-      {/* 2. SCENE II: ACTIVE OPPORTUNITIES (Prominent) */}
-      <OpportunityStream items={formattedOpportunities} />
-
-      {/* 3. SCENE III: IMPACT METRICS & PHILOSOPHY */}
-      <ImpactMetrics counts={metricsCounts} />
-      <IdentitySignal />
-
-      {/* 4. SCENE IV: CURRENT FOCUS */}
-      <CurrentFocus points={focusPoints} />
-
-      {/* 5. SCENE V: THE OUTPUT (WORK) */}
-      <FeaturedWork projects={formattedProjects} />
-
-      {/* 6. SCENE VI: THE TOOLS (WORKBENCH) */}
-      <Workbench tools={techTools} />
-
-      {/* 7. SCENE VII: CAPABILITIES */}
-      <Capabilities items={capabilities} />
-
-      {/* 8. SCENE VIII: THE PATH (JOURNEY) */}
-      <Journey items={timelineItems} />
-
-      {/* 9. SCENE IX: LIFE (GALLERY) */}
-      <Gallery items={formattedGalleryItems} />
-
-      {/* 10. SCENE X: THE THOUGHTS (WRITING) */}
-      <WritingStudio posts={formattedPosts} />
-
-    </main>
+    <HomeScene
+      heroContent={heroContent}
+      settings={settings}
+      latestTicker={latestTicker}
+      formattedOpportunities={formattedOpportunities}
+      metricsCounts={metricsCounts}
+      focusPoints={focusPoints}
+      formattedProjects={formattedProjects}
+      techTools={techTools}
+      capabilities={capabilities}
+      timelineItems={timelineItems}
+      formattedGalleryItems={formattedGalleryItems}
+      formattedPosts={formattedPosts}
+    />
   );
 }
