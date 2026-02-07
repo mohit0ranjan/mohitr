@@ -1,11 +1,27 @@
 import { BentoGrid, BentoCard } from "@/components/ui/bento-grid";
 import { Heart, Coffee, Globe, Code, ArrowLeft } from "lucide-react";
 import Link from "next/link";
-import { FadeIn } from "@/components/ui/motion";
+import { FadeIn, FadeInStagger } from "@/components/ui/motion";
+import { prisma } from "@/lib/prisma";
+import { markdownToHtml } from "@/lib/markdown";
 
-export default function AboutPage() {
+export const revalidate = 3600;
+
+export default async function AboutPage() {
+    // Fetch dynamic content
+    const aboutContentRaw = await prisma.pageContent.findUnique({ where: { section: 'about' } });
+    const content = aboutContentRaw?.content
+        ? JSON.parse(aboutContentRaw.content)
+        : {
+            headline: "Beyond the Terminal.",
+            subtext: "A software engineering student at NIT Jalandhar, building tools for developers and exploring the intersection of distributed systems and human-centric design.",
+            bio: ""
+        };
+
+    const bioHtml = content.bio ? await markdownToHtml(content.bio) : "";
+
     return (
-        <main className="min-h-screen bg-[#030303] text-foreground relative z-0 overflow-hidden">
+        <main className="min-h-screen bg-[#030303] text-foreground relative z-0 overflow-hidden font-sans selection:bg-indigo-500/30">
 
             {/* Ambient Background Glows */}
             <div className="fixed top-0 right-0 w-[500px] h-[500px] bg-indigo-500/5 blur-[120px] rounded-full mix-blend-screen pointer-events-none" />
@@ -27,50 +43,68 @@ export default function AboutPage() {
                             <ArrowLeft size={14} /> Back to HQ
                         </Link>
                         <h1 className="text-5xl md:text-8xl font-black text-white tracking-tighter mb-8 leading-[0.9]">
-                            Beyond the <br /> <span className="text-neutral-500">Terminal.</span>
+                            {content.headline || "Beyond the Terminal."}
                         </h1>
                         <p className="text-xl text-neutral-400 leading-relaxed max-w-3xl">
-                            A software engineering student at NIT Jalandhar, building tools for developers and exploring the intersection of distributed systems and human-centric design.
+                            {content.subtext || "A software engineering student at NIT Jalandhar, building tools for developers."}
                         </p>
                     </header>
                 </FadeIn>
 
                 <BentoGrid className="lg:auto-rows-[280px] gap-8">
-                    {/* Story Card */}
-                    <BentoCard colSpan={2} rowSpan={2} className="p-10 md:p-14 bg-white/[0.03] border-white/5 rounded-[2.5rem] relative overflow-hidden group">
+                    {/* Story / Bio Card - Replaces static Values */}
+                    <BentoCard colSpan={2} rowSpan={2} className="p-10 md:p-14 bg-white/[0.03] border-white/5 rounded-[2.5rem] relative overflow-hidden group flex flex-col">
 
-                        <div className="absolute top-0 right-0 p-12 opacity-5">
+                        <div className="absolute top-0 right-0 p-12 opacity-5 pointer-events-none">
                             <Code size={180} />
                         </div>
 
-                        <h2 className="text-3xl font-bold mb-10 text-white tracking-tight">Values & Philosophy</h2>
-                        <div className="space-y-8">
-                            <div className="flex gap-6 group/item">
-                                <div className="p-3 bg-indigo-500/10 rounded-2xl h-fit text-indigo-400 group-hover/item:bg-indigo-500 group-hover/item:text-white transition-all"><Heart size={24} /></div>
-                                <div>
-                                    <h3 className="text-lg font-bold mb-2 text-white">User Centricity</h3>
-                                    <p className="text-neutral-400 leading-relaxed">Technological complexity is never an excuse for friction. I build with empathy, ensuring every interaction feels intentional and light.</p>
-                                </div>
+                        {content.bio ? (
+                            <div className="relative z-10">
+                                <article
+                                    className="prose prose-invert prose-lg max-w-none 
+                                    prose-headings:font-bold prose-headings:tracking-tight prose-headings:text-white 
+                                    prose-p:text-neutral-400 prose-p:leading-loose 
+                                    prose-li:text-neutral-400 
+                                    prose-strong:text-white prose-strong:font-semibold
+                                    prose-a:text-indigo-400 prose-a:no-underline hover:prose-a:underline
+                                    "
+                                    dangerouslySetInnerHTML={{ __html: bioHtml }}
+                                />
                             </div>
-                            <div className="flex gap-6 group/item">
-                                <div className="p-3 bg-indigo-500/10 rounded-2xl h-fit text-indigo-400 group-hover/item:bg-indigo-500 group-hover/item:text-white transition-all"><Code size={24} /></div>
-                                <div>
-                                    <h3 className="text-lg font-bold mb-2 text-white">Digital Craftsmanship</h3>
-                                    <p className="text-neutral-400 leading-relaxed">I care about the details visible and invisible. From clean architecture to pixel-perfect layouts and smooth 60fps animations.</p>
-                                </div>
+                        ) : (
+                            // Fallback to static values if no bio
+                            <div className="relative z-10 space-y-8">
+                                <h2 className="text-3xl font-bold mb-6 text-white tracking-tight">Values & Philosophy</h2>
+                                <FadeInStagger>
+                                    <div className="flex gap-6 group/item mb-8">
+                                        <div className="p-3 bg-indigo-500/10 rounded-2xl h-fit text-indigo-400 group-hover/item:bg-indigo-500 group-hover/item:text-white transition-all"><Heart size={24} /></div>
+                                        <div>
+                                            <h3 className="text-lg font-bold mb-2 text-white">User Centricity</h3>
+                                            <p className="text-neutral-400 leading-relaxed">Technological complexity is never an excuse for friction. I build with empathy, ensuring every interaction feels intentional.</p>
+                                        </div>
+                                    </div>
+                                    <div className="flex gap-6 group/item mb-8">
+                                        <div className="p-3 bg-indigo-500/10 rounded-2xl h-fit text-indigo-400 group-hover/item:bg-indigo-500 group-hover/item:text-white transition-all"><Code size={24} /></div>
+                                        <div>
+                                            <h3 className="text-lg font-bold mb-2 text-white">Digital Craftsmanship</h3>
+                                            <p className="text-neutral-400 leading-relaxed">I care about the details visible and invisible. From clean architecture to pixel-perfect layouts.</p>
+                                        </div>
+                                    </div>
+                                    <div className="flex gap-6 group/item">
+                                        <div className="p-3 bg-indigo-500/10 rounded-2xl h-fit text-indigo-400 group-hover/item:bg-indigo-500 group-hover/item:text-white transition-all"><Globe size={24} /></div>
+                                        <div>
+                                            <h3 className="text-lg font-bold mb-2 text-white">The Open Web</h3>
+                                            <p className="text-neutral-400 leading-relaxed">Believer in a free, open, and high-performance web. Dedicated to contributing to open source.</p>
+                                        </div>
+                                    </div>
+                                </FadeInStagger>
                             </div>
-                            <div className="flex gap-6 group/item">
-                                <div className="p-3 bg-indigo-500/10 rounded-2xl h-fit text-indigo-400 group-hover/item:bg-indigo-500 group-hover/item:text-white transition-all"><Globe size={24} /></div>
-                                <div>
-                                    <h3 className="text-lg font-bold mb-2 text-white">The Open Web</h3>
-                                    <p className="text-neutral-400 leading-relaxed">Believer in a free, open, and high-performance web. Dedicated to contributing to open source and sharing knowledge with the community.</p>
-                                </div>
-                            </div>
-                        </div>
+                        )}
                     </BentoCard>
 
                     {/* Photo / Visual */}
-                    <BentoCard colSpan={2} className="relative overflow-hidden min-h-[400px] rounded-[2.5rem] bg-neutral-900/50 border-white/5">
+                    <BentoCard colSpan={2} className="relative overflow-hidden min-h-[400px] rounded-[2.5rem] bg-neutral-900/50 border-white/5 group">
                         <div className="absolute inset-0 bg-neutral-900 group-hover:scale-105 transition-transform duration-1000" />
                         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
 

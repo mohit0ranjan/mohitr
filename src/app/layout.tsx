@@ -8,6 +8,7 @@ import Footer from "@/components/ui/Footer";
 import { format } from "date-fns";
 import { prisma } from "@/lib/prisma";
 import { GalleryItem } from "@prisma/client";
+import { Analytics } from "@vercel/analytics/react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -84,6 +85,12 @@ export default async function RootLayout({
     date: item.date
   }));
 
+  // Fetch opportunities for global search
+  const opportunitiesRaw = await prisma.opportunity.findMany({
+    where: { status: 'Active' },
+    select: { title: true, company: true, slug: true, type: true }
+  });
+
   return (
     <html lang="en">
       <body
@@ -91,7 +98,7 @@ export default async function RootLayout({
       >
         <JsonLd />
         <PageTracker />
-        <Navbar posts={allPosts} />
+        <Navbar posts={allPosts} opportunities={opportunitiesRaw} />
         {children}
         <Footer galleryItems={formattedGalleryItems} />
       </body>

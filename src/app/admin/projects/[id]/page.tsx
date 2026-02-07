@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma"
 import { saveProject } from "../actions"
 import Link from "next/link"
+import Editor from "@/components/admin/Editor"
 
 export default async function ProjectEditorPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params
@@ -73,7 +74,12 @@ export default async function ProjectEditorPage({ params }: { params: Promise<{ 
 
                 <div className="space-y-2">
                     <label className="block text-sm font-medium text-neutral-300">Detailed Content (Markdown)</label>
-                    <textarea name="detail" defaultValue={project?.detail ?? ""} rows={10} className="w-full px-3 py-2 bg-neutral-900 border border-neutral-800 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500/50 transition-all font-mono text-sm" placeholder="# Detailed case study..." />
+                    <Editor
+                        name="detail"
+                        markdown={project?.detail ?? ""}
+                        className="min-h-[400px]"
+                        placeholder="# Detailed case study..."
+                    />
                 </div>
 
                 <div className="pt-4 border-t border-neutral-800">

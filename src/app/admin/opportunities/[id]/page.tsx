@@ -2,6 +2,7 @@
 import { prisma } from "@/lib/prisma"
 import { saveOpportunity } from "../actions"
 import Link from "next/link"
+import Editor from "@/components/admin/Editor"
 
 export default async function OpportunityEditorPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params
@@ -95,7 +96,11 @@ export default async function OpportunityEditorPage({ params }: { params: Promis
 
                     <div className="space-y-2">
                         <label className="text-sm font-medium text-neutral-300">Full Description <span className="text-neutral-500 text-xs">(Markdown supported)</span></label>
-                        <textarea name="fullDescription" defaultValue={opp?.fullDescription ?? ""} required rows={10} className="w-full px-4 py-3 bg-neutral-900/50 border border-neutral-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500/50 transition-all font-mono text-sm" placeholder="## Responsibilities..." />
+                        <Editor
+                            markdown={opp?.fullDescription ?? ""}
+                            name="fullDescription"
+                            className="min-h-[500px]"
+                        />
                     </div>
                 </div>
 

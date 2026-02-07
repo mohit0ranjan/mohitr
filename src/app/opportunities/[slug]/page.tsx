@@ -7,6 +7,7 @@ import { ArrowLeft, Calendar, MapPin, Clock, Building2, ExternalLink } from 'luc
 import { ShareButtons } from '@/components/ui/ShareButtons'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
+import rehypeRaw from 'rehype-raw'
 
 interface Props {
     params: Promise<{ slug: string }>
@@ -112,7 +113,7 @@ export default async function OpportunityDetailPage({ params }: Props) {
                         prose-ul:my-6 prose-ul:list-disc prose-ul:pl-6
                         prose-strong:text-white prose-strong:font-semibold
                         prose-hr:border-neutral-800 prose-hr:my-10">
-                        <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                        <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>
                             {opp.fullDescription}
                         </ReactMarkdown>
                     </article>

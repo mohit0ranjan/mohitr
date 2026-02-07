@@ -10,8 +10,10 @@
     "postinstall": "prisma generate"
   },
   "dependencies": {
+    "@mdxeditor/editor": "^3.52.3",
     "@prisma/client": "^5.22.0",
     "@tailwindcss/typography": "^0.5.19",
+    "@vercel/analytics": "^1.6.1",
     "bcryptjs": "^3.0.3",
     "cheerio": "^1.2.0",
     "class-variance-authority": "^0.7.1",
@@ -27,6 +29,7 @@
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "react-markdown": "^10.1.0",
+    "rehype-raw": "^7.0.0",
     "remark": "^15.0.1",
     "remark-gfm": "^4.0.1",
     "remark-html": "^16.0.1",

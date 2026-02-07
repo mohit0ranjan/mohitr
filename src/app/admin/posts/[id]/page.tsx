@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma"
 import { savePost } from "../actions"
 import Link from "next/link"
+import Editor from "@/components/admin/Editor"
 
 export default async function PostEditorPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params
@@ -54,13 +55,10 @@ export default async function PostEditorPage({ params }: { params: Promise<{ id:
 
                         <div className="space-y-2">
                             <label className="block text-sm font-medium text-neutral-300">Content (Markdown)</label>
-                            <textarea
+                            <Editor
+                                markdown={post?.content ?? ""}
                                 name="content"
-                                defaultValue={post?.content ?? ""}
-                                required
-                                rows={20}
-                                className="w-full px-4 py-3 bg-neutral-900 border border-neutral-800 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500/50 transition-all font-mono text-sm leading-relaxed"
-                                placeholder="# Your story..."
+                                className="min-h-[600px]"
                             />
                         </div>
                     </div>

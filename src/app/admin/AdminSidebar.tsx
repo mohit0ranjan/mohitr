@@ -29,6 +29,7 @@ export function AdminSidebar() {
             items: [
                 { href: "/admin", label: "Overview", icon: LayoutDashboard },
                 { href: "/admin/hero", label: "Hero Section", icon: LayoutTemplate },
+                { href: "/admin/about", label: "About Section", icon: Briefcase },
                 { href: "/admin/posts", label: "Blog Posts", icon: FileText },
                 { href: "/admin/projects", label: "Projects", icon: FolderKanban },
                 { href: "/admin/gallery", label: "Gallery", icon: ImageIcon },

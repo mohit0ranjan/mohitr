@@ -9,9 +9,10 @@ import SearchModal from "./search-modal";
 
 interface NavbarProps {
     posts?: any[];
+    opportunities?: any[];
 }
 
-export default function Navbar({ posts = [] }: NavbarProps) {
+export default function Navbar({ posts = [], opportunities = [] }: NavbarProps) {
     const [scrolled, setScrolled] = useState(false);
     const [mobileOpen, setMobileOpen] = useState(false);
     const pathname = usePathname();
@@ -85,7 +86,7 @@ export default function Navbar({ posts = [] }: NavbarProps) {
                 </div>
 
                 <div className="hidden md:flex items-center gap-4">
-                    <SearchModal posts={posts} />
+                    <SearchModal posts={posts} opportunities={opportunities} />
                     <a
                         href="https://github.com/mohit0ranjan"
                         target="_blank"
@@ -98,7 +99,7 @@ export default function Navbar({ posts = [] }: NavbarProps) {
 
                 {/* Mobile Toggle */}
                 <div className="flex items-center gap-4 md:hidden">
-                    <SearchModal posts={posts} />
+                    <SearchModal posts={posts} opportunities={opportunities} />
                     <button
                         className="text-white"
                         onClick={() => setMobileOpen(!mobileOpen)}

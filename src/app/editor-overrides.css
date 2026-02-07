@@ -1,0 +1,55 @@
+/* MDX Editor Override Styles */
+.mdx-editor-wrapper {
+    background-color: #0d0d0d !important;
+    border-radius: 0.5rem;
+    border: 1px solid #262626 !important;
+}
+
+.mdx-editor-wrapper .mdx-editor-toolbar,
+.mdx-editor-wrapper [role="toolbar"] {
+    background-color: #171717 !important;
+    border-bottom: 1px solid #262626 !important;
+    border-radius: 0.5rem 0.5rem 0 0;
+}
+
+.mdx-editor-wrapper .mdx-editor-content {
+    background-color: #0d0d0d !important;
+    color: #ffffff !important;
+    min-height: 400px;
+    padding: 1rem;
+}
+
+/* Force white text on everything inside content */
+.mdx-editor-content * {
+    color: #ffffff !important;
+}
+
+/* Exceptions */
+.mdx-editor-content a {
+    color: #818cf8 !important;
+    /* Indigo for links */
+    text-decoration: underline;
+}
+
+.mdx-editor-content code {
+    color: #f472b6 !important;
+    /* Pink for code */
+    background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.mdx-editor-content blockquote {
+    border-left: 4px solid #ffffff !important;
+    color: #e5e5e5 !important;
+    font-style: italic;
+    padding-left: 1rem;
+}
+
+/* Toolbar buttons */
+.mdx-editor-wrapper button {
+    color: #a3a3a3 !important;
+}
+
+.mdx-editor-wrapper button:hover {
+    color: #ffffff !important;
+    background-color: rgba(255, 255, 255, 0.1) !important;
+}

@@ -4,6 +4,7 @@ import { useState, useRef } from 'react';
 import { extractOpportunityData, publishOpportunity } from '../actions';
 import { useFormStatus } from 'react-dom';
 import Link from 'next/link';
+import Editor from '@/components/admin/Editor';
 import { ArrowLeft, Check, Copy, ExternalLink, RefreshCcw, Bold, List, Heading, Link as LinkIcon, Quote, Code, ArrowUpRight } from 'lucide-react';
 
 function SubmitButton({ label, loadingLabel }: { label: string, loadingLabel: string }) {
@@ -20,81 +21,6 @@ function SubmitButton({ label, loadingLabel }: { label: string, loadingLabel: st
     );
 }
 
-function MarkdownEditor({ initialValue, name }: { initialValue: string, name: string }) {
-    const [value, setValue] = useState(initialValue);
-    const textareaRef = useRef<HTMLTextAreaElement>(null);
-
-    const insertFormat = (prefix: string, suffix: string = "") => {
-        if (!textareaRef.current) return;
-
-        const start = textareaRef.current.selectionStart;
-        const end = textareaRef.current.selectionEnd;
-        const text = textareaRef.current.value;
-
-        const before = text.substring(0, start);
-        const selection = text.substring(start, end);
-        const after = text.substring(end);
-
-        const newValue = `${before}${prefix}${selection}${suffix}${after}`;
-        setValue(newValue);
-
-        // Restore focus and selection
-        setTimeout(() => {
-            if (textareaRef.current) {
-                textareaRef.current.focus();
-                textareaRef.current.setSelectionRange(start + prefix.length, end + prefix.length);
-            }
-        }, 0);
-    };
-
-    const insertBlock = (prefix: string) => {
-        if (!textareaRef.current) return;
-        const start = textareaRef.current.selectionStart;
-        const text = textareaRef.current.value;
-
-        // Check if we are at start of line
-        const lastNewLine = text.lastIndexOf('\n', start - 1);
-        const isStartOfLine = lastNewLine === start - 1 || start === 0;
-
-        const insertion = isStartOfLine ? prefix : `\n${prefix}`;
-
-        insertFormat(insertion);
-    };
-
-    return (
-        <div className="border border-neutral-800 rounded-lg overflow-hidden bg-neutral-950 focus-within:border-neutral-600 transition-colors">
-            {/* Toolbar */}
-            <div className="flex items-center gap-1 p-2 border-b border-neutral-800 bg-neutral-900/50">
-                <button type="button" onClick={() => insertFormat('**', '**')} className="p-1.5 text-neutral-400 hover:text-white hover:bg-neutral-800 rounded" title="Bold">
-                    <Bold size={14} />
-                </button>
-                <button type="button" onClick={() => insertFormat('*', '*')} className="p-1.5 text-neutral-400 hover:text-white hover:bg-neutral-800 rounded" title="Italic">
-                    <span className="italic font-serif font-bold text-sm">I</span>
-                </button>
-                <div className="w-px h-4 bg-neutral-800 mx-1" />
-                <button type="button" onClick={() => insertBlock('- ')} className="p-1.5 text-neutral-400 hover:text-white hover:bg-neutral-800 rounded" title="Bullet List">
-                    <List size={14} />
-                </button>
-                <button type="button" onClick={() => insertBlock('### ')} className="p-1.5 text-neutral-400 hover:text-white hover:bg-neutral-800 rounded" title="Heading">
-                    <Heading size={14} />
-                </button>
-                <div className="w-px h-4 bg-neutral-800 mx-1" />
-                <button type="button" onClick={() => insertFormat('\n\n')} className="p-1.5 text-neutral-400 hover:text-white hover:bg-neutral-800 rounded px-2 text-xs font-mono" title="Paragraph Break">
-                    ¶ Break
-                </button>
-            </div>
-
-            <textarea
-                ref={textareaRef}
-                name={name}
-                value={value}
-                onChange={(e) => setValue(e.target.value)}
-                className="w-full bg-transparent p-4 min-h-[400px] text-neutral-300 outline-none font-mono text-sm leading-loose resize-y"
-                required
-            />
-        </div>
-    );
-}
 
 export default function NewOpportunityPage() {
     const [step, setStep] = useState<'input' | 'review' | 'success'>('input');
@@ -311,8 +237,8 @@ export default function NewOpportunityPage() {
                                 <span className="text-[10px] text-neutral-600">Markdown Supported</span>
                             </label>
 
-                            <MarkdownEditor
-                                initialValue={extractedData.description}
+                            <Editor
+                                markdown={extractedData.description}
                                 name="fullDescription"
                             />
                         </div>
