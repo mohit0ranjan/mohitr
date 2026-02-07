@@ -36,18 +36,24 @@ model Project {
 }
 
 model Opportunity {
-  id          String   @id @default(uuid())
-  role        String
-  company     String
-  location    String?
-  type        String
-  description String?
-  url         String?
-  dateShared  DateTime @default(now())
-  status      String   @default("Active")
-  isFeatured  Boolean  @default(false)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id               String   @id @default(uuid())
+  title            String
+  slug             String   @unique
+  company          String
+  location         String? // Remote, On-site, Hybrid, City, Country
+  type             String   // Internship, Full-time, Freelance
+  shortDescription String
+  fullDescription  String   @db.Text
+  applyLink        String?
+  duration         String?
+  stipend          String?
+  startDate        DateTime?
+  endDate          DateTime?
+  status           String   @default("Active") // Active, Closed
+  isPublished      Boolean  @default(false)
+  isFeatured       Boolean  @default(false)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
 }
 
 model DevTool {
@@ -82,8 +88,11 @@ model TimelineEntry {
   id          String   @id @default(uuid())
   year        String
   title       String
+  company     String?
+  location    String?
   type        String
   description String
+  url         String?
   order       Int      @default(0)
   isVisible   Boolean  @default(true)
   createdAt   DateTime @default(now())
@@ -140,6 +149,7 @@ model User {
   email     String   @unique
   password  String
   name      String?
+  role      String   @default("ADMIN")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

@@ -1,11 +1,12 @@
-import { ArrowUpRight, MapPin, Building2, Sparkles } from "lucide-react";
+
+import { ArrowUpRight, Clock, MapPin, Building2, Ticket } from "lucide-react";
 import { FadeIn, FadeInStagger } from "@/components/ui/motion";
 import Link from "next/link";
 import { format } from "date-fns";
 
 interface Opportunity {
     id: string;
-    role: string;
+    title: string;
     company: string;
     type: string;
     location: string;
@@ -19,96 +20,126 @@ export default function OpportunityStream({ items }: { items: Opportunity[] }) {
     if (!items.length) return null;
 
     return (
-        <section className="py-24 bg-[#030303] relative overflow-hidden">
+        <section className="py-24 bg-[#030303] relative border-t border-white/5">
 
-            {/* Ambient Base Glow */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-emerald-500/[0.02] blur-[150px] pointer-events-none" />
+            {/* Background Texture */}
+            <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')] mix-blend-overlay" />
 
-            <div className="container mx-auto px-6 md:px-12 max-w-7xl relative z-10">
+            <div className="container mx-auto px-6 md:px-12 max-w-5xl relative z-10">
 
-                <FadeIn className="mb-16">
-                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-                        <div>
-                            <div className="flex items-center gap-2 mb-4">
-                                <span className="h-px w-8 bg-emerald-500/50" />
-                                <span className="text-[10px] font-mono uppercase tracking-[0.3em] text-emerald-500 font-bold">Signals Feed</span>
-                            </div>
-                            <h2 className="text-4xl md:text-5xl font-black text-white tracking-tighter">
-                                Verified <span className="text-neutral-700">Opportunities.</span>
+                <FadeIn className="mb-16 flex flex-col md:flex-row md:items-end justify-between gap-6">
+                    <div>
+                        <div className="flex items-center gap-2 mb-3">
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                            <h2 className="text-xs font-mono text-emerald-500 uppercase tracking-widest">
+                                Live Signal Feed
                             </h2>
                         </div>
-                        <Link href="/opportunities" className="group flex items-center gap-3 bg-white/5 hover:bg-white/10 border border-white/10 px-5 py-2.5 rounded-full transition-all duration-300">
-                            <span className="text-xs font-bold text-white">Full Stream</span>
-                            <ArrowUpRight size={16} className="text-emerald-500 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-                        </Link>
+                        <h2 className="text-3xl md:text-5xl font-bold text-white tracking-tighter">
+                            Active <span className="text-neutral-600">Opportunities.</span>
+                        </h2>
                     </div>
+                    <Link
+                        href="/opportunities"
+                        className="text-xs font-mono text-neutral-500 hover:text-white transition-colors uppercase tracking-widest flex items-center gap-2 group"
+                    >
+                        View Full Index
+                        <span className="w-4 h-px bg-neutral-700 group-hover:w-8 group-hover:bg-white transition-all" />
+                    </Link>
                 </FadeIn>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <FadeInStagger className="contents">
-                        {items.map((job, i) => (
-                            <FadeIn key={job.id} delay={i * 0.05}>
-                                <a
-                                    href={job.link}
-                                    target="_blank"
-                                    className="group relative flex items-center gap-4 p-4 rounded-2xl bg-[#0a0a0a] border border-white/5 hover:border-emerald-500/30 transition-all duration-500"
-                                >
-                                    {/* Left Accent Bar */}
-                                    <div className="absolute left-0 top-1/4 bottom-1/4 w-[2px] bg-emerald-500 opacity-0 group-hover:opacity-100 transition-opacity rounded-r-full" />
+                <FadeInStagger className="space-y-6">
+                    {items.map((job, i) => (
+                        <FadeIn key={job.id} delay={i * 0.1}>
+                            <Link
+                                href={job.link}
+                                className="group relative block w-full bg-[#080808] border border-white/5 hover:border-white/10 rounded-2xl overflow-hidden transition-all duration-300 shadow-2xl shadow-black/50 hover:shadow-emerald-900/10"
+                            >
+                                <div className="flex flex-col md:flex-row h-full">
 
-                                    {/* Company Icon (Smaller & Unique) */}
-                                    <div className="w-12 h-12 rounded-xl bg-neutral-900 border border-white/5 flex items-center justify-center shrink-0 group-hover:scale-95 transition-transform duration-500">
-                                        <span className="text-lg font-black text-neutral-600 group-hover:text-emerald-500 transition-colors">
-                                            {job.company.charAt(0)}
-                                        </span>
+                                    {/* LEFT: MAIN PASS (70%) */}
+                                    <div className="flex-1 p-6 md:p-8 relative">
+                                        {/* BG Gradient on Hover */}
+                                        <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/[0.03] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+                                        <div className="relative z-10 flex flex-col justify-between h-full gap-6">
+                                            <div>
+                                                <div className="flex items-start justify-between gap-4 mb-2">
+                                                    <h3 className="text-xl md:text-3xl font-bold text-white group-hover:text-emerald-400 transition-colors tracking-tight">
+                                                        {job.title}
+                                                    </h3>
+                                                    {job.isNew && (
+                                                        <span className="shrink-0 text-[9px] font-black uppercase tracking-widest text-emerald-500 border border-emerald-500/20 bg-emerald-500/10 px-2 py-1 rounded">
+                                                            New
+                                                        </span>
+                                                    )}
+                                                </div>
+                                                <p className="text-lg text-neutral-400 font-medium flex items-center gap-2">
+                                                    <Building2 size={16} className="text-neutral-600" />
+                                                    {job.company}
+                                                </p>
+                                            </div>
+
+                                            <div className="flex flex-wrap items-center gap-y-2 gap-x-6 text-xs font-mono text-neutral-500 uppercase tracking-wider">
+                                                <span className="flex items-center gap-2">
+                                                    <MapPin size={12} className="text-neutral-600" />
+                                                    {job.location}
+                                                </span>
+                                                <span className="w-1 h-1 rounded-full bg-neutral-800" />
+                                                <span>{job.type}</span>
+                                                <span className="hidden md:block w-1 h-1 rounded-full bg-neutral-800" />
+                                                <span className="hidden md:flex items-center gap-2">
+                                                    <Clock size={12} className="text-neutral-600" />
+                                                    {format(new Date(job.dateShared), "MMM d, yyyy")}
+                                                </span>
+                                            </div>
+                                        </div>
                                     </div>
 
-                                    {/* Main Info */}
-                                    <div className="flex-1 min-w-0">
-                                        <div className="flex items-center gap-2 mb-0.5">
-                                            <h3 className="text-sm md:text-base font-bold text-white truncate group-hover:text-emerald-400 transition-colors tracking-tight">
-                                                {job.role}
-                                            </h3>
-                                            {job.isNew && (
-                                                <Sparkles size={10} className="text-emerald-500 animate-pulse shrink-0" />
-                                            )}
-                                        </div>
-
-                                        <div className="flex items-center gap-3 text-[10px] text-neutral-500 font-medium">
-                                            <div className="flex items-center gap-1 shrink-0">
-                                                <Building2 size={10} className="text-neutral-700" />
-                                                <span className="text-neutral-400 uppercase tracking-wider">{job.company}</span>
-                                            </div>
-                                            <span className="h-1 w-1 rounded-full bg-neutral-800" />
-                                            <div className="flex items-center gap-1 truncate">
-                                                <MapPin size={10} className="text-neutral-700" />
-                                                <span className="truncate">{job.location}</span>
-                                            </div>
-                                        </div>
+                                    {/* DIVIDER (Perforation) */}
+                                    <div className="relative md:w-px h-px md:h-auto border-t md:border-t-0 md:border-l-2 border-dashed border-[#1a1a1a] bg-[#080808]">
+                                        {/* The Notches */}
+                                        <div className="absolute -left-2 -top-2 md:-top-2 md:-left-2 w-4 h-4 bg-[#030303] rounded-full z-20" />
+                                        <div className="absolute -right-2 -top-2 md:-bottom-2 md:-left-2 w-4 h-4 bg-[#030303] rounded-full z-20" />
                                     </div>
 
-                                    {/* Compact Right Section */}
-                                    <div className="flex flex-col items-end shrink-0 gap-1 opacity-60 group-hover:opacity-100 transition-opacity">
-                                        <span className="text-[8px] font-black px-2 py-0.5 rounded-md bg-white/5 border border-white/5 text-neutral-400 uppercase tracking-[0.1em]">
-                                            {job.type}
-                                        </span>
-                                        <span className="text-[9px] font-mono text-neutral-600">
+                                    {/* RIGHT: STUB (Action) */}
+                                    <div className="md:w-48 bg-[#0a0a0a] group-hover:bg-[#0c0c0c] transition-colors p-6 flex flex-row md:flex-col items-center justify-between md:justify-center relative">
+
+                                        {/* Barcode Lines (Fake) */}
+                                        <div className="hidden md:flex flex-row gap-1 h-8 opacity-20 mb-4 scale-x-150 origin-center">
+                                            <div className="w-1 bg-white h-full" />
+                                            <div className="w-0.5 bg-white h-full" />
+                                            <div className="w-2 bg-white h-full" />
+                                            <div className="w-0.5 bg-white h-full" />
+                                            <div className="w-3 bg-white h-full" />
+                                        </div>
+
+                                        <div className="text-left md:text-center md:mb-4">
+                                            <p className="text-[10px] font-mono text-neutral-600 uppercase tracking-widest mb-1">Status</p>
+                                            <p className="text-xs font-bold text-emerald-500 flex items-center md:justify-center gap-1.5">
+                                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
+                                                OP-EN
+                                            </p>
+                                        </div>
+
+                                        <div className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-white/50 group-hover:bg-white group-hover:text-black group-hover:scale-110 transition-all duration-300">
+                                            <ArrowUpRight size={18} />
+                                        </div>
+
+                                        {/* Mobile Date Fallback */}
+                                        <div className="md:hidden text-[10px] font-mono text-neutral-600">
                                             {format(new Date(job.dateShared), "MMM d")}
-                                        </span>
+                                        </div>
                                     </div>
 
-                                    {/* Hover Arrow (Minimal) */}
-                                    <div className="absolute right-2 top-2 opacity-0 group-hover:opacity-30 transition-opacity">
-                                        <ArrowUpRight size={12} className="text-white" />
-                                    </div>
-                                </a>
-                            </FadeIn>
-                        ))}
-                    </FadeInStagger>
-                </div>
+                                </div>
+                            </Link>
+                        </FadeIn>
+                    ))}
+                </FadeInStagger>
 
             </div>
         </section>
     );
 }
-

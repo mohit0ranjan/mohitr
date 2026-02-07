@@ -48,7 +48,7 @@ export default async function Home() {
     }),
     prisma.opportunity.findMany({
       where: { status: "Active" },
-      orderBy: { dateShared: 'desc' },
+      orderBy: { createdAt: 'desc' },
       take: 5
     }),
     prisma.techTool.findMany({
@@ -109,13 +109,13 @@ export default async function Home() {
 
   const formattedOpportunities = opportunities.map(job => ({
     id: job.id,
-    role: job.role,
+    title: job.title,
     company: job.company,
     type: job.type,
     location: job.location || "Remote",
-    link: job.url || "#",
-    isNew: true, // Could compare dateShared difference
-    dateShared: job.dateShared,
+    link: `/opportunities/${job.slug}`,
+    isNew: true, // Could compare date difference
+    dateShared: job.createdAt,
     isFeatured: job.isFeatured
   }));
 

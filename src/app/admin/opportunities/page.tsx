@@ -32,7 +32,7 @@ export default async function OpportunitiesPage() {
                         {opportunities.map(opp => (
                             <tr key={opp.id} className="hover:bg-neutral-900/50 transition-colors">
                                 <td className="p-4">
-                                    <div className="font-medium text-white">{opp.role}</div>
+                                    <div className="font-medium text-white">{opp.title}</div>
                                     <div className="text-neutral-500 text-xs">{opp.company}</div>
                                 </td>
                                 <td className="p-4 text-neutral-300">{opp.type}</td>
