@@ -67,17 +67,26 @@ export default function Hero({ content, settings, ticker }: HeroProps) {
                     {/* Central Statement - The "Hook" */}
                     <div className="flex flex-col items-start gap-4">
 
-                        <FadeIn delay={0.2} className="relative z-10">
-                            <h1 className="text-6xl md:text-8xl lg:text-9xl font-bold tracking-tighter leading-[0.9] text-white">
-                                <span className="block hover:text-transparent hover:bg-clip-text hover:bg-gradient-to-r hover:from-white hover:to-neutral-500 transition-all duration-700 cursor-default">
-                                    {content?.heading?.split(" ")[0] || "System"}
-                                </span>
-                                <span className="block pl-4 md:pl-24 text-neutral-600">
-                                    {content?.heading?.split(" ")[1] || "Architect"}
-                                </span>
-                                <span className="block text-right pr-4 md:pr-12 bg-clip-text text-transparent bg-gradient-to-b from-white to-neutral-500">
-                                    & {content?.heading?.split(" ")[3] || "Maker"}
-                                </span>
+                        <FadeIn delay={0.2} className="relative z-10 w-full">
+                            <h1 className="text-6xl md:text-8xl lg:text-9xl font-bold tracking-tighter leading-[0.9] text-white flex flex-col items-start">
+                                {content?.heading ? (
+                                    <div
+                                        dangerouslySetInnerHTML={{ __html: content.heading }}
+                                        className="[&>span]:text-neutral-600 [&>br]:hidden md:[&>br]:block"
+                                    />
+                                ) : (
+                                    <>
+                                        <span className="block hover:text-transparent hover:bg-clip-text hover:bg-gradient-to-r hover:from-white hover:to-neutral-500 transition-all duration-700 cursor-default">
+                                            System
+                                        </span>
+                                        <span className="block pl-4 md:pl-24 text-neutral-600">
+                                            Architect
+                                        </span>
+                                        <span className="block text-right self-end bg-clip-text text-transparent bg-gradient-to-b from-white to-neutral-500">
+                                            & Maker
+                                        </span>
+                                    </>
+                                )}
                             </h1>
                         </FadeIn>
 

@@ -36,24 +36,25 @@ model Project {
 }
 
 model Opportunity {
-  id               String   @id @default(uuid())
+  id               String    @id @default(uuid())
   title            String
-  slug             String   @unique
+  slug             String    @unique
   company          String
-  location         String? // Remote, On-site, Hybrid, City, Country
-  type             String   // Internship, Full-time, Freelance
+  location         String?
+  type             String
   shortDescription String
-  fullDescription  String   @db.Text
+  fullDescription  String
   applyLink        String?
   duration         String?
   stipend          String?
   startDate        DateTime?
   endDate          DateTime?
-  status           String   @default("Active") // Active, Closed
-  isPublished      Boolean  @default(false)
-  isFeatured       Boolean  @default(false)
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  status           String    @default("Active")
+  isPublished      Boolean   @default(false)
+  isFeatured       Boolean   @default(false)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  imageUrl         String?
 }
 
 model DevTool {
@@ -88,15 +89,15 @@ model TimelineEntry {
   id          String   @id @default(uuid())
   year        String
   title       String
-  company     String?
-  location    String?
   type        String
   description String
-  url         String?
   order       Int      @default(0)
   isVisible   Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  company     String?
+  location    String?
+  url         String?
 }
 
 model FocusPoint {
@@ -149,9 +150,9 @@ model User {
   email     String   @unique
   password  String
   name      String?
-  role      String   @default("ADMIN")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  role      String   @default("ADMIN")
 }
 
 model PageContent {

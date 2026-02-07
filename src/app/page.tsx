@@ -116,7 +116,8 @@ export default async function Home() {
     link: `/opportunities/${job.slug}`,
     isNew: true, // Could compare date difference
     dateShared: job.createdAt,
-    isFeatured: job.isFeatured
+    isFeatured: job.isFeatured,
+    description: job.shortDescription || undefined
   }));
 
   // Fix: Gallery expects Date object, and imageUrl
@@ -144,18 +145,18 @@ export default async function Home() {
         ticker={latestTicker}
       />
 
-      {/* 2. SCENE II: IMPACT METRICS & PHILOSOPHY */}
+      {/* 2. SCENE II: ACTIVE OPPORTUNITIES (Prominent) */}
+      <OpportunityStream items={formattedOpportunities} />
+
+      {/* 3. SCENE III: IMPACT METRICS & PHILOSOPHY */}
       <ImpactMetrics counts={metricsCounts} />
       <IdentitySignal />
 
-      {/* 3. SCENE III: CURRENT FOCUS */}
+      {/* 4. SCENE IV: CURRENT FOCUS */}
       <CurrentFocus points={focusPoints} />
 
-      {/* 4. SCENE IV: THE OUTPUT (WORK) */}
+      {/* 5. SCENE V: THE OUTPUT (WORK) */}
       <FeaturedWork projects={formattedProjects} />
-
-      {/* 5. SCENE V: THE SIGNALS (OPPORTUNITIES) */}
-      <OpportunityStream items={formattedOpportunities} />
 
       {/* 6. SCENE VI: THE TOOLS (WORKBENCH) */}
       <Workbench tools={techTools} />

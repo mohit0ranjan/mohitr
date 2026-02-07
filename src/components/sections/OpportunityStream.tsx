@@ -1,5 +1,5 @@
 
-import { ArrowUpRight, Clock, MapPin, Building2, Ticket } from "lucide-react";
+import { ArrowUpRight, MapPin, Building2, Clock } from "lucide-react";
 import { FadeIn, FadeInStagger } from "@/components/ui/motion";
 import Link from "next/link";
 import { format } from "date-fns";
@@ -14,6 +14,7 @@ interface Opportunity {
     isNew: boolean;
     dateShared: Date;
     isFeatured?: boolean;
+    description?: string; // Kept in interface but not used in UI
 }
 
 export default function OpportunityStream({ items }: { items: Opportunity[] }) {
@@ -25,9 +26,9 @@ export default function OpportunityStream({ items }: { items: Opportunity[] }) {
             {/* Background Texture */}
             <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')] mix-blend-overlay" />
 
-            <div className="container mx-auto px-6 md:px-12 max-w-5xl relative z-10">
+            <div className="container mx-auto px-6 md:px-12 max-w-4xl relative z-10">
 
-                <FadeIn className="mb-16 flex flex-col md:flex-row md:items-end justify-between gap-6">
+                <FadeIn className="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
                     <div>
                         <div className="flex items-center gap-2 mb-3">
                             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
@@ -35,7 +36,7 @@ export default function OpportunityStream({ items }: { items: Opportunity[] }) {
                                 Live Signal Feed
                             </h2>
                         </div>
-                        <h2 className="text-3xl md:text-5xl font-bold text-white tracking-tighter">
+                        <h2 className="text-3xl md:text-4xl font-bold text-white tracking-tighter">
                             Active <span className="text-neutral-600">Opportunities.</span>
                         </h2>
                     </div>
@@ -48,89 +49,48 @@ export default function OpportunityStream({ items }: { items: Opportunity[] }) {
                     </Link>
                 </FadeIn>
 
-                <FadeInStagger className="space-y-6">
+                <FadeInStagger className="space-y-3">
                     {items.map((job, i) => (
-                        <FadeIn key={job.id} delay={i * 0.1}>
+                        <FadeIn key={job.id} delay={i * 0.05}>
                             <Link
                                 href={job.link}
-                                className="group relative block w-full bg-[#080808] border border-white/5 hover:border-white/10 rounded-2xl overflow-hidden transition-all duration-300 shadow-2xl shadow-black/50 hover:shadow-emerald-900/10"
+                                className="group relative block w-full bg-[#080808] border border-white/5 hover:border-white/10 rounded-xl overflow-hidden transition-all duration-300 hover:bg-neutral-900/50"
                             >
-                                <div className="flex flex-col md:flex-row h-full">
+                                <div className="flex items-center justify-between p-4 md:p-5">
 
-                                    {/* LEFT: MAIN PASS (70%) */}
-                                    <div className="flex-1 p-6 md:p-8 relative">
-                                        {/* BG Gradient on Hover */}
-                                        <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/[0.03] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-
-                                        <div className="relative z-10 flex flex-col justify-between h-full gap-6">
-                                            <div>
-                                                <div className="flex items-start justify-between gap-4 mb-2">
-                                                    <h3 className="text-xl md:text-3xl font-bold text-white group-hover:text-emerald-400 transition-colors tracking-tight">
-                                                        {job.title}
-                                                    </h3>
-                                                    {job.isNew && (
-                                                        <span className="shrink-0 text-[9px] font-black uppercase tracking-widest text-emerald-500 border border-emerald-500/20 bg-emerald-500/10 px-2 py-1 rounded">
-                                                            New
-                                                        </span>
-                                                    )}
-                                                </div>
-                                                <p className="text-lg text-neutral-400 font-medium flex items-center gap-2">
-                                                    <Building2 size={16} className="text-neutral-600" />
-                                                    {job.company}
-                                                </p>
-                                            </div>
-
-                                            <div className="flex flex-wrap items-center gap-y-2 gap-x-6 text-xs font-mono text-neutral-500 uppercase tracking-wider">
-                                                <span className="flex items-center gap-2">
-                                                    <MapPin size={12} className="text-neutral-600" />
-                                                    {job.location}
+                                    {/* LEFT: MAIN INFO */}
+                                    <div className="flex flex-col gap-1.5 pr-4">
+                                        <div className="flex items-center gap-3">
+                                            <h3 className="text-base md:text-lg font-bold text-white group-hover:text-emerald-400 transition-colors tracking-tight line-clamp-1">
+                                                {job.title}
+                                            </h3>
+                                            {job.isNew && (
+                                                <span className="hidden md:inline-flex text-[9px] font-bold uppercase tracking-widest text-emerald-500 bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/20">
+                                                    New
                                                 </span>
-                                                <span className="w-1 h-1 rounded-full bg-neutral-800" />
-                                                <span>{job.type}</span>
-                                                <span className="hidden md:block w-1 h-1 rounded-full bg-neutral-800" />
-                                                <span className="hidden md:flex items-center gap-2">
-                                                    <Clock size={12} className="text-neutral-600" />
-                                                    {format(new Date(job.dateShared), "MMM d, yyyy")}
-                                                </span>
-                                            </div>
+                                            )}
+                                        </div>
+
+                                        <div className="flex flex-wrap items-center gap-y-1 gap-x-3 text-xs text-neutral-400">
+                                            <span className="font-medium text-neutral-300 flex items-center gap-1.5">
+                                                <Building2 size={12} className="text-neutral-500" />
+                                                {job.company}
+                                            </span>
+                                            <span className="w-0.5 h-0.5 rounded-full bg-neutral-700" />
+                                            <span className="flex items-center gap-1.5">
+                                                <MapPin size={12} className="text-neutral-600" />
+                                                {job.location}
+                                            </span>
+                                            <span className="w-0.5 h-0.5 rounded-full bg-neutral-700" />
+                                            <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium border ${job.type === 'Internship' ? 'bg-blue-500/5 text-blue-400 border-blue-500/10' : 'bg-purple-500/5 text-purple-400 border-purple-500/10'}`}>
+                                                {job.type}
+                                            </span>
                                         </div>
                                     </div>
 
-                                    {/* DIVIDER (Perforation) */}
-                                    <div className="relative md:w-px h-px md:h-auto border-t md:border-t-0 md:border-l-2 border-dashed border-[#1a1a1a] bg-[#080808]">
-                                        {/* The Notches */}
-                                        <div className="absolute -left-2 -top-2 md:-top-2 md:-left-2 w-4 h-4 bg-[#030303] rounded-full z-20" />
-                                        <div className="absolute -right-2 -top-2 md:-bottom-2 md:-left-2 w-4 h-4 bg-[#030303] rounded-full z-20" />
-                                    </div>
-
-                                    {/* RIGHT: STUB (Action) */}
-                                    <div className="md:w-48 bg-[#0a0a0a] group-hover:bg-[#0c0c0c] transition-colors p-6 flex flex-row md:flex-col items-center justify-between md:justify-center relative">
-
-                                        {/* Barcode Lines (Fake) */}
-                                        <div className="hidden md:flex flex-row gap-1 h-8 opacity-20 mb-4 scale-x-150 origin-center">
-                                            <div className="w-1 bg-white h-full" />
-                                            <div className="w-0.5 bg-white h-full" />
-                                            <div className="w-2 bg-white h-full" />
-                                            <div className="w-0.5 bg-white h-full" />
-                                            <div className="w-3 bg-white h-full" />
-                                        </div>
-
-                                        <div className="text-left md:text-center md:mb-4">
-                                            <p className="text-[10px] font-mono text-neutral-600 uppercase tracking-widest mb-1">Status</p>
-                                            <p className="text-xs font-bold text-emerald-500 flex items-center md:justify-center gap-1.5">
-                                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
-                                                OP-EN
-                                            </p>
-                                        </div>
-
-                                        <div className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-white/50 group-hover:bg-white group-hover:text-black group-hover:scale-110 transition-all duration-300">
-                                            <ArrowUpRight size={18} />
-                                        </div>
-
-                                        {/* Mobile Date Fallback */}
-                                        <div className="md:hidden text-[10px] font-mono text-neutral-600">
-                                            {format(new Date(job.dateShared), "MMM d")}
-                                        </div>
+                                    {/* RIGHT: ARROW */}
+                                    <div className="shrink-0 pl-4 border-l border-white/5 h-8 flex items-center justify-center">
+                                        <ArrowUpRight size={18} className="text-neutral-600 group-hover:text-emerald-500 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
                                     </div>
 
                                 </div>
