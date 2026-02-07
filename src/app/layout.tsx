@@ -32,7 +32,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://mohitranjan.dev",
+    url: "https://www.mohitr.in",
     title: "Mohit Ranjan | CSE Student & Developer",
     description: "Building software, tools, and opportunities for the tech community.",
     siteName: "Mohit Ranjan",
@@ -101,6 +101,7 @@ export default async function RootLayout({
         <Navbar posts={allPosts} opportunities={opportunitiesRaw} />
         {children}
         <Footer galleryItems={formattedGalleryItems} />
+        <Analytics />
       </body>
     </html>
   );

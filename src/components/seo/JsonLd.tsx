@@ -3,7 +3,7 @@ export default function JsonLd() {
         "@context": "https://schema.org",
         "@type": "Person",
         "name": "Mohit Ranjan",
-        "url": "https://mohitranjan.dev",
+        "url": "https://www.mohitr.in",
         "jobTitle": "Student & Software Developer",
         "affiliation": {
             "@type": "Organization",
