@@ -21,8 +21,9 @@ export default function Journey({ items }: { items: TimelineEntry[] }) {
         <section className="py-32 bg-[#030303] relative border-t border-white/5 overflow-hidden">
 
             {/* Ambient Gradients - Shifted Down feeling */}
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-            <div className="absolute top-[10%] left-0 w-[500px] h-[500px] bg-indigo-900/10 blur-[100px] rounded-full pointer-events-none" />
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[1px] bg-gradient-to-r from-transparent via-emerald-500/20 to-transparent" />
+            <div className="absolute top-[10%] left-0 w-[500px] h-[500px] bg-emerald-900/10 blur-[120px] rounded-full pointer-events-none" />
+            <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-indigo-900/10 blur-[120px] rounded-full pointer-events-none" />
 
             <div className="container mx-auto px-6 md:px-12 max-w-6xl relative z-10">
 

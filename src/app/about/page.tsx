@@ -24,8 +24,8 @@ export default async function AboutPage() {
         <main className="min-h-screen bg-[#030303] text-foreground relative z-0 overflow-hidden font-sans selection:bg-indigo-500/30">
 
             {/* Ambient Background Glows */}
-            <div className="fixed top-0 right-0 w-[500px] h-[500px] bg-indigo-500/5 blur-[120px] rounded-full mix-blend-screen pointer-events-none" />
-            <div className="fixed bottom-0 left-0 w-[500px] h-[500px] bg-purple-500/5 blur-[120px] rounded-full mix-blend-screen pointer-events-none" />
+            <div className="fixed top-0 right-0 w-[500px] h-[500px] bg-purple-600/10 blur-[150px] rounded-full mix-blend-screen pointer-events-none" />
+            <div className="fixed bottom-0 left-0 w-[500px] h-[500px] bg-indigo-600/10 blur-[150px] rounded-full mix-blend-screen pointer-events-none" />
 
             {/* Noise Overlay */}
             <div className="fixed inset-0 z-50 pointer-events-none opacity-[0.03] bg-noise"></div>

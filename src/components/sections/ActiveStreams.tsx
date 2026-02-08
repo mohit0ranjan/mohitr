@@ -33,11 +33,30 @@ export default function ActiveStreams({
     hackathons: Hackathon[]
 }) {
     return (
-        <section className="container mx-auto px-6 max-w-7xl py-24">
+        <section className="container mx-auto px-6 max-w-7xl py-24 relative z-10">
+
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="mb-16 md:mb-24 text-center max-w-3xl mx-auto"
+            >
+                <h2 className="text-4xl md:text-6xl font-black tracking-tight mb-6">
+                    <span className="block text-white mb-2">Build in Public.</span>
+                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-400 to-indigo-500">
+                        Share Opportunities.
+                    </span>
+                </h2>
+                <p className="text-lg text-neutral-400 leading-relaxed">
+                    A live feed of hackathons, internships, and open-source bounties.
+                    Curated for the community.
+                </p>
+            </motion.div>
+
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 relative">
 
                 {/* Center Divider styling */}
-                <div className="hidden lg:block absolute left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-white/10 to-transparent" />
+                <div className="hidden lg:block absolute left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-emerald-500/20 to-transparent" />
 
                 {/* Left Column: Opportunities */}
                 <div className="space-y-8">
@@ -118,8 +137,8 @@ export default function ActiveStreams({
                                     <div className="flex items-center gap-4">
                                         {/* Status Badge */}
                                         <div className={`px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border ${hack.status === 'Open' ? 'bg-emerald-950/30 text-emerald-400 border-emerald-500/20' :
-                                                hack.status === 'Live' ? 'bg-rose-950/30 text-rose-400 border-rose-500/20' :
-                                                    'bg-indigo-950/30 text-indigo-400 border-indigo-500/20'
+                                            hack.status === 'Live' ? 'bg-rose-950/30 text-rose-400 border-rose-500/20' :
+                                                'bg-indigo-950/30 text-indigo-400 border-indigo-500/20'
                                             }`}>
                                             {hack.status}
                                         </div>

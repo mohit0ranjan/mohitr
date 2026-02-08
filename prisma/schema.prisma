@@ -182,3 +182,49 @@ model Hackathon {
   createdAt            DateTime  @default(now())
   updatedAt            DateTime  @updatedAt
 }
+
+// --- OFF-CAMPUS OUTREACH MODELS ---
+
+model RecruiterDataset {
+  id          String   @id @default(uuid())
+  title       String
+  description String?
+  companies   String // e.g. "Google, Microsoft..." or "MAANG + Startups"
+  role        String // "HR / Recruiter"
+  location    String // "India / Global"
+  emailCount  Int
+  fileFormat  String // "Excel / CSV"
+  price       String // "Free" or "₹499"
+  topmateLink String?
+  imageUrl    String?  // Thumbnail for marketplace view
+  isVerified  Boolean  @default(true)
+  lastUpdated DateTime @default(now())
+  isPublished Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model ColdEmailTemplate {
+  id          String   @id @default(uuid())
+  title       String // "Internship Cold Email"
+  subject     String
+  body        String   // Markdown or text
+  category    String   // "Internship", "Full-time", "Follow-up"
+  tips        String?  // "Do's & Don'ts"
+  isPublished Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model OutreachTool {
+  id               String   @id @default(uuid())
+  name             String
+  description      String
+  link             String
+  pricing          String   // "Free", "Freemium", "Paid"
+  category         String   // "Verification", "AI Writer", "Tracking"
+  icon             String?  // Lucide icon name or URL
+  isPublished      Boolean  @default(true)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}

@@ -27,14 +27,14 @@ export default function OpportunityDirectory({ opportunities }: { opportunities:
     ];
 
     return (
-        <section className="min-h-screen pt-32 pb-20 px-4 md:px-8 relative font-sans">
+        <section className="min-h-screen pt-32 pb-16 px-4 md:px-8 relative font-sans">
             {/* Background Texture */}
-            <div className="fixed inset-0 bg-[#050505] -z-10" />
+            <div className="fixed inset-0 bg-[#030303] -z-10" />
             <div className="fixed inset-0 bg-[linear-gradient(rgba(18,18,18,0)_1px,transparent_1px),linear-gradient(90deg,rgba(18,18,18,0)_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_60%_60%_at_50%_0%,#000_70%,transparent_100%)] opacity-20 -z-10" />
 
             <div className="container mx-auto max-w-6xl">
                 {/* 1. Futuristic Header */}
-                <div className="flex flex-col md:flex-row justify-between items-end mb-16 border-b border-white/10 pb-8">
+                <div className="flex flex-col md:flex-row justify-between items-end mb-12 border-b border-white/10 pb-8">
                     <div className="w-full">
                         <div className="flex items-center gap-2 mb-2">
                             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />

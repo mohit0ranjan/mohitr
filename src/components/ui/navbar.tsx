@@ -34,8 +34,9 @@ export default function Navbar({ posts = [], opportunities = [] }: NavbarProps) 
     const links = [
         { name: "Projects", href: "/projects" },
         { name: "Tools", href: "/tools" },
+        { name: "OffCampus", href: "/offcampus" },
         { name: "Blog", href: "/blog" },
-        { name: "Opps", href: "/opportunities", full: "Opportunities" }, // Shortened for space
+        { name: "Opportunities", href: "/opportunities" },
         { name: "Hackathons", href: "/hackathons" },
         { name: "About", href: "/about" },
     ];
@@ -144,7 +145,7 @@ export default function Navbar({ posts = [], opportunities = [] }: NavbarProps) 
                                         : "hover:bg-white/5 text-neutral-400 hover:text-white"
                                 )}
                             >
-                                <span className="text-sm font-medium">{link.full || link.name}</span>
+                                <span className="text-sm font-medium">{link.name}</span>
                                 {pathname === link.href && (
                                     <div className="w-1.5 h-1.5 rounded-full bg-indigo-500" />
                                 )}

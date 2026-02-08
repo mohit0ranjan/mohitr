@@ -15,9 +15,9 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
     }, [pathname])
 
     return (
-        <div className="flex flex-col md:flex-row min-h-screen bg-neutral-950 text-white font-sans selection:bg-purple-500/30">
+        <div className="flex flex-col md:flex-row min-h-screen bg-[#030303] text-white font-sans selection:bg-purple-500/30">
             {/* Mobile Header */}
-            <header className="md:hidden flex items-center justify-between p-4 bg-neutral-950 border-b border-neutral-800 sticky top-0 z-[60]">
+            <header className="md:hidden flex items-center justify-between p-4 bg-[#030303] border-b border-white/5 sticky top-0 z-[60]">
                 <div>
                     <h1 className="text-lg font-bold">Admin</h1>
                     <p className="text-[10px] text-neutral-500">Portfolio Manager</p>
@@ -40,7 +40,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
 
             {/* Sidebar */}
             <aside className={`
-                fixed inset-y-0 left-0 w-72 bg-neutral-950 border-r border-neutral-800 p-6 flex flex-col z-[55] 
+                fixed inset-y-0 left-0 w-72 bg-[#030303] border-r border-white/5 p-6 flex flex-col z-[55] 
                 transition-transform duration-300 md:translate-x-0
                 ${isOpen ? "translate-x-0" : "-translate-x-full"}
                 md:w-64 md:fixed
@@ -56,7 +56,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
             </aside>
 
             {/* Main Content */}
-            <main className="flex-1 w-full md:ml-64 p-4 md:p-8 min-h-screen bg-neutral-950">
+            <main className="flex-1 w-full md:ml-64 p-4 md:p-8 min-h-screen bg-[#030303]">
                 <div className="max-w-5xl mx-auto">
                     {children}
                 </div>

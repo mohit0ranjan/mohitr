@@ -39,15 +39,15 @@ export default function HackathonDirectory({ hackathons }: { hackathons: Hackath
     ];
 
     return (
-        <section className="min-h-screen pt-32 pb-20 px-6 relative">
+        <section className="min-h-screen pt-32 pb-16 px-6 relative">
             {/* Background */}
             <div className="fixed inset-0 bg-[#030303] -z-10" />
-            <div className="fixed inset-0 opacity-[0.02] bg-[url('https://grainy-gradients.vercel.app/noise.svg')] pointer-events-none -z-10" />
+            <div className="fixed inset-0 opacity-[0.03] bg-[url('/noise.svg')] pointer-events-none -z-10" />
 
             <div className="container mx-auto max-w-7xl">
 
                 {/* Header */}
-                <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16">
+                <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-12">
                     <div>
                         <h1 className="text-5xl md:text-7xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white via-neutral-200 to-neutral-500 tracking-tight mb-6">
                             Hackathons.

@@ -46,18 +46,18 @@ export default async function BlogIndex() {
             {/* Noise Overlay */}
             <div className="fixed inset-0 z-50 pointer-events-none opacity-[0.03] bg-noise"></div>
 
-            <div className="container mx-auto px-6 md:px-12 pt-40 pb-32 max-w-4xl relative z-10">
+            <div className="container mx-auto px-6 md:px-12 pt-32 pb-16 max-w-4xl relative z-10">
 
-                <FadeIn className="mb-20">
+                <FadeIn className="mb-16">
                     <div className="flex items-center gap-3 mb-4">
-                        <div className="w-12 h-[1px] bg-indigo-500/50" />
-                        <span className="text-xs font-mono uppercase tracking-[0.2em] text-indigo-400">The Studio</span>
+                        <div className="w-12 h-[1px] bg-emerald-500/50" />
+                        <span className="text-xs font-mono uppercase tracking-[0.2em] text-emerald-400">The Studio</span>
                     </div>
                     <header className="mb-12">
                         <Link href="/" className="inline-flex items-center gap-2 text-xs font-mono text-neutral-500 hover:text-white transition-colors mb-8 uppercase tracking-widest">
                             <ArrowLeft size={14} /> Back to HQ
                         </Link>
-                        <h1 className="text-5xl md:text-8xl font-black text-white tracking-tighter mb-8 leading-[0.9]">
+                        <h1 className="text-4xl md:text-7xl font-black text-white tracking-tighter mb-6 leading-[0.9]">
                             Writing & <br /> <span className="text-neutral-500">Insights.</span>
                         </h1>
                         <p className="text-xl text-neutral-400 leading-relaxed max-w-2xl">

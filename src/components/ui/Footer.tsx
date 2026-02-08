@@ -1,148 +1,111 @@
+
 "use client";
 
 import Link from "next/link";
-import { FadeIn } from "@/components/ui/motion";
-import { Copy, Mail } from "lucide-react";
-import Image from "next/image";
-import { usePathname } from "next/navigation";
-import ConnectSection from "@/components/sections/Connect";
+import { ArrowUpRight, Github, Linkedin, Twitter, Mail } from "lucide-react";
 
-interface GalleryItem {
-    id: string;
-    title: string;
-    imageUrl: string;
-    date: Date;
-}
-
-export default function Footer({ galleryItems = [] }: { galleryItems?: GalleryItem[] }) {
-    const pathname = usePathname();
-    const isHomePage = pathname === "/";
-
-    // Limit to latest 4 for the strip if provided
-    const recentSnaps = galleryItems.slice(0, 4);
-
-    if (pathname?.startsWith("/admin") || pathname?.startsWith("/login")) {
-        return null;
-    }
-
+export default function Footer() {
     return (
-        <footer className="bg-black relative z-20 border-t border-white/10 overflow-hidden">
+        <footer className="relative bg-[#020202] border-t border-white/5 pt-32 pb-12 overflow-hidden">
 
-            {/* Render Grand Finale only on Home Page */}
-            {isHomePage && (
-                <>
-                    {/* 0. VISUAL JOURNAL STRIP */}
-                    {recentSnaps.length > 0 && (
-                        <div className="w-full border-b border-white/5 py-12 bg-[#050505]">
-                            <div className="container mx-auto px-6 max-w-7xl">
-                                <FadeIn className="mb-8 flex items-center justify-between">
-                                    <span className="text-xs font-mono uppercase tracking-widest text-neutral-600">Visual Journal</span>
-                                    <span className="text-xs font-mono text-neutral-600">@mohitranjan</span>
-                                </FadeIn>
+            {/* Massive Ambient Glows */}
+            <div className="absolute -top-[300px] left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-emerald-900/10 blur-[150px] rounded-full pointer-events-none mix-blend-screen" />
+            <div className="absolute bottom-[-20%] right-[-10%] w-[800px] h-[800px] bg-indigo-900/10 blur-[150px] rounded-full pointer-events-none mix-blend-screen" />
+            <div className="absolute inset-0 bg-[url('/noise.svg')] opacity-[0.03] pointer-events-none" />
 
-                                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                                    {recentSnaps.map((item) => (
-                                        <div key={item.id} className="relative aspect-square group overflow-hidden rounded-md bg-neutral-900 filter grayscale hover:grayscale-0 transition-all duration-700 cursor-pointer">
-                                            <Image
-                                                src={item.imageUrl}
-                                                alt={item.title}
-                                                fill
-                                                className="object-cover transition-transform duration-700 group-hover:scale-105"
-                                            />
-                                            <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors" />
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        </div>
-                    )}
+            <div className="container mx-auto px-6 md:px-12 max-w-7xl relative z-10">
 
-                    {/* 1. HUGE CALL TO ACTION */}
-                    <div className="py-24 md:py-32 container mx-auto px-6 md:px-12 max-w-7xl text-center">
-                        <FadeIn>
-                            <h2 className="text-[12vw] leading-none font-black text-white tracking-tighter mb-8 select-none">
-                                LET'S BUILD
-                            </h2>
-                            <p className="text-xl md:text-2xl text-neutral-400 font-light max-w-2xl mx-auto mb-12">
-                                Have an idea or a complex system to engineer? <br className="hidden md:block" />
-                                I'm currently available for select opportunities.
-                            </p>
+                {/* 1. Header & Call to Action */}
+                <div className="flex flex-col md:flex-row md:items-end justify-between gap-12 mb-24 pb-24 border-b border-white/5">
+                    <div className="max-w-2xl">
+                        <h2 className="text-5xl md:text-7xl font-black tracking-tighter text-white mb-6">
+                            Let’s build <br />
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-500">the future.</span>
+                        </h2>
+                        <p className="text-xl text-neutral-400 max-w-lg leading-relaxed">
+                            Open to new opportunities, collaborations, and technical challenges.
+                        </p>
+                    </div>
+                    <div className="flex gap-4">
+                        <a
+                            href="mailto:hello@mohitranjan.com"
+                            className="px-8 py-4 rounded-full bg-white text-black font-bold text-lg hover:scale-105 transition-transform shadow-[0_0_40px_-10px_rgba(255,255,255,0.5)]"
+                        >
+                            Say Hello
+                        </a>
+                    </div>
+                </div>
 
-                            <div className="flex flex-col md:flex-row items-center justify-center gap-6">
-                                <Link
-                                    href="mailto:hello@mohit.com"
-                                    className="bg-white text-black px-8 py-4 rounded-full font-bold text-lg flex items-center gap-2 hover:scale-105 transition-transform duration-300"
-                                >
-                                    <Mail size={20} />
-                                    Say Hello
-                                </Link>
-                                <button
-                                    className="px-8 py-4 rounded-full border border-white/20 text-white font-medium flex items-center gap-2 hover:bg-white/5 transition-colors"
-                                    onClick={() => {
-                                        navigator.clipboard.writeText("hello@mohit.com");
-                                        alert("Email copied!");
-                                    }}
-                                >
-                                    <Copy size={20} />
-                                    Copy Email
-                                </button>
-                            </div>
-                        </FadeIn>
+                {/* 2. Links Grid */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-12 lg:gap-24 mb-24">
+
+                    <div className="space-y-6">
+                        <h3 className="text-sm font-bold text-white uppercase tracking-widest opacity-50">Navigation</h3>
+                        <ul className="space-y-4">
+                            <li><Link href="/about" className="text-neutral-400 hover:text-white transition-colors text-lg">About</Link></li>
+                            <li><Link href="/projects" className="text-neutral-400 hover:text-white transition-colors text-lg">Projects</Link></li>
+                            <li><Link href="/opportunities" className="text-neutral-400 hover:text-white transition-colors text-lg">Opportunities</Link></li>
+                            <li><Link href="/gallery" className="text-neutral-400 hover:text-white transition-colors text-lg">Visual Journal</Link></li>
+                        </ul>
                     </div>
 
-                    {/* CONNECT & FOLLOW SECTION */}
-                    <ConnectSection />
-
-
-                    {/* 2. MARQUEE STRIP */}
-                    <div className="w-full bg-indigo-600 overflow-hidden py-3 rotate-1 scale-105 origin-left md:rotate-0 md:scale-100">
-                        <div className="flex whitespace-nowrap animate-marquee">
-                            {[...Array(10)].map((_, i) => (
-                                <div key={i} className="flex items-center mx-8 text-black font-bold font-mono tracking-widest text-sm uppercase">
-                                    <span>Open for Work</span>
-                                    <span className="mx-4">•</span>
-                                    <span>System Architecture</span>
-                                    <span className="mx-4">•</span>
-                                    <span>Full Stack</span>
-                                    <span className="mx-4">•</span>
-                                </div>
-                            ))}
-                        </div>
+                    <div className="space-y-6">
+                        <h3 className="text-sm font-bold text-white uppercase tracking-widest opacity-50">Socials</h3>
+                        <ul className="space-y-4">
+                            <li>
+                                <a href="https://github.com/mohit0ranjan" target="_blank" className="flex items-center gap-2 text-neutral-400 hover:text-emerald-400 transition-colors text-lg group">
+                                    <Github size={18} /> GitHub <ArrowUpRight size={14} className="opacity-0 group-hover:opacity-100 transition-opacity" />
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://linkedin.com/in/itsmohitr" target="_blank" className="flex items-center gap-2 text-neutral-400 hover:text-pink-400 transition-colors text-lg group">
+                                    <Linkedin size={18} /> LinkedIn <ArrowUpRight size={14} className="opacity-0 group-hover:opacity-100 transition-opacity" />
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://twitter.com/mohitranjan" target="_blank" className="flex items-center gap-2 text-neutral-400 hover:text-blue-400 transition-colors text-lg group">
+                                    <Twitter size={18} /> Twitter <ArrowUpRight size={14} className="opacity-0 group-hover:opacity-100 transition-opacity" />
+                                </a>
+                            </li>
+                        </ul>
                     </div>
-                </>
-            )}
 
+                    <div className="space-y-6">
+                        <h3 className="text-sm font-bold text-white uppercase tracking-widest opacity-50">Resources</h3>
+                        <ul className="space-y-4">
+                            <li><Link href="/resume.pdf" className="text-neutral-400 hover:text-white transition-colors text-lg">Resume</Link></li>
+                            <li><Link href="/hackathons" className="text-neutral-400 hover:text-white transition-colors text-lg">Hackathons</Link></li>
+                            <li><Link href="/admin" className="text-neutral-400 hover:text-white transition-colors text-lg">Admin</Link></li>
+                        </ul>
+                    </div>
 
-            {/* 3. SUBTLE BOTTOM FOOTER (Always Visible) */}
-            <div className="bg-[#050505] py-12 border-t border-white/5">
-                <div className="container mx-auto px-6 md:px-12 max-w-7xl flex flex-col md:flex-row justify-between items-end gap-8">
-
-                    <div>
-                        <span className="text-2xl font-bold text-white block mb-2">MR.</span>
-                        <p className="text-neutral-500 text-sm max-w-xs">
-                            Crafted with Next.js, Tailwind, and Prisma.<br />
-                            Deployed on Vercel.
+                    <div className="space-y-6">
+                        <h3 className="text-sm font-bold text-white uppercase tracking-widest opacity-50">Status</h3>
+                        <div className="flex items-center gap-3">
+                            <span className="relative flex h-3 w-3">
+                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                                <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+                            </span>
+                            <span className="text-emerald-400 font-medium">All Systems Normal</span>
+                        </div>
+                        <p className="text-neutral-500 text-sm">
+                            Last deploy: {new Date().toLocaleDateString()}
                         </p>
                     </div>
 
-                    <div className="flex gap-8">
-                        <Link href="https://github.com/mohit0ranjan" className="text-neutral-400 hover:text-white transition-colors text-sm uppercase tracking-wider font-mono">Github</Link>
-                        <Link href="https://www.linkedin.com/in/itsmohitr/" className="text-neutral-400 hover:text-white transition-colors text-sm uppercase tracking-wider font-mono">LinkedIn</Link>
-                        <Link href="https://twitter.com" className="text-neutral-400 hover:text-white transition-colors text-sm uppercase tracking-wider font-mono">Twitter</Link>
-                    </div>
-
                 </div>
-            </div>
 
-            <style jsx>{`
-                .animate-marquee {
-                    animation: marquee 20s linear infinite;
-                }
-                @keyframes marquee {
-                    0% { transform: translateX(0); }
-                    100% { transform: translateX(-50%); }
-                }
-            `}</style>
+                {/* 3. Bottom Bar */}
+                <div className="flex flex-col md:flex-row items-center justify-between pt-8 border-t border-white/5 gap-6">
+                    <p className="text-neutral-600 text-sm font-mono">
+                        © {new Date().getFullYear()} Mohit Ranjan. All rights reserved.
+                    </p>
+                    <p className="text-neutral-700 text-xs font-mono uppercase tracking-widest">
+                        Designed & Engineered with ❤️ in India
+                    </p>
+                </div>
+
+            </div>
         </footer>
     );
 }

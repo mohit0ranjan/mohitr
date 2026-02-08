@@ -18,7 +18,10 @@ import {
     LogOut,
     ExternalLink,
     LayoutTemplate,
-    Trophy
+    Trophy,
+    Database, // Added
+    Mail,     // Added
+    PenTool   // Added
 } from "lucide-react"
 
 export function AdminSidebar() {
@@ -53,7 +56,15 @@ export function AdminSidebar() {
                 { href: "/admin/focus", label: "Current Focus", icon: Crosshair },
                 { href: "/admin/updates", label: "Update Ticker", icon: Radio },
             ]
-        }
+        },
+        {
+            label: "Off-Campus Hub",
+            items: [
+                { href: "/admin/off-campus/datasets", label: "Datasets", icon: Database },
+                { href: "/admin/off-campus/templates", label: "Templates", icon: Mail },
+                { href: "/admin/off-campus/tools", label: "Outreach Tools", icon: PenTool },
+            ]
+        },
     ]
 
     return (

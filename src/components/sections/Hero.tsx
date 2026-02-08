@@ -1,295 +1,209 @@
 "use client";
 
-import { motion, useScroll, useTransform, useSpring, useMotionValue } from "framer-motion";
-import { ArrowDown, Github, Linkedin, BadgeCheck, MapPin, Terminal } from "lucide-react";
+import { motion, Variants, useScroll, useTransform } from "framer-motion";
+import { ArrowUpRight, Terminal, Cpu, Layers, Box, Github, Linkedin, Twitter, Cloud, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
-import { FadeIn, FadeInStagger } from "@/components/ui/motion";
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
 
-interface HeroProps {
-    content?: {
-        heading?: string;
-        subheading?: string;
-        status?: string;
-    };
-    settings?: {
-        linkedin?: string;
-        github?: string;
-        resume?: string;
-    };
-    ticker?: {
-        content: string;
-        type: string;
-    } | null;
-}
-
-export default function Hero({ content, settings, ticker }: HeroProps) {
-    const containerRef = useRef<HTMLElement>(null);
+export default function HeroProp({ content, settings, ticker }: any) {
+    const containerRef = useRef(null);
     const { scrollY } = useScroll();
+    const y1 = useTransform(scrollY, [0, 300], [0, 100]);
+    const y2 = useTransform(scrollY, [0, 300], [0, -100]);
 
-    // 3D Parallax Logic
-    const mouseX = useMotionValue(0);
-    const mouseY = useMotionValue(0);
-
-    const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
-        const { clientX, clientY, currentTarget } = e;
-        const width = currentTarget.clientWidth;
-        const height = currentTarget.clientHeight;
-
-        // Normalize coordinates to -1 to 1
-        mouseX.set((clientX / width) * 2 - 1);
-        mouseY.set((clientY / height) * 2 - 1);
+    // Typed variants
+    const fadeInUp: Variants = {
+        hidden: { opacity: 0, scale: 0.9, y: 20 },
+        visible: (custom: number) => ({
+            opacity: 1,
+            scale: 1,
+            y: 0,
+            transition: { delay: custom * 0.1, duration: 0.6, type: "spring", stiffness: 100 }
+        })
     };
 
-    // Springs for smooth movement
-    const springConfig = { damping: 30, stiffness: 200, mass: 0.5 };
-    const x = useSpring(useTransform(mouseX, [-1, 1], [-15, 15]), springConfig); // Foreground move
-    const y = useSpring(useTransform(mouseY, [-1, 1], [-15, 15]), springConfig);
-
-    // Background parallax (moves opposite slightly)
-    const bgX = useSpring(useTransform(mouseX, [-1, 1], [10, -10]), springConfig);
-    const bgY = useSpring(useTransform(mouseY, [-1, 1], [10, -10]), springConfig);
-
-    // Card tilt
-    const rotateX = useSpring(useTransform(mouseY, [-1, 1], [5, -5]), springConfig);
-    const rotateY = useSpring(useTransform(mouseX, [-1, 1], [-5, 5]), springConfig);
+    const float: Variants = {
+        animate: {
+            y: [0, -10, 0],
+            rotate: [0, 2, -2, 0],
+            transition: {
+                duration: 5,
+                repeat: Infinity,
+                ease: "easeInOut"
+            }
+        }
+    };
 
     return (
-        <section
-            ref={containerRef}
-            onMouseMove={handleMouseMove}
-            className="min-h-screen w-full relative flex items-start md:items-center justify-center overflow-hidden bg-[#030303] text-white pt-32 md:pt-0 perspective-1000"
-        >
+        <section ref={containerRef} className="min-h-[100dvh] w-full relative flex flex-col items-center justify-center overflow-hidden bg-[#030303] text-white pt-24 pb-12 sm:pt-20 sm:pb-20 perspective-1000">
 
-            {/* 1. Dynamic Background - Atmospheric & Deep */}
-            <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-                {/* Deep Indigo/Black Gradient */}
-                <div className="absolute inset-0 bg-gradient-to-b from-black via-[#050510] to-[#0a0a0a]" />
-
-                {/* Moving Light Orbs - Parallax Enhanced */}
+            {/* 1. Background Atmosphere */}
+            <div className="absolute inset-0 z-0 pointer-events-none">
                 <motion.div
-                    style={{ x: bgX, y: bgY }}
-                    animate={{ opacity: [0.2, 0.4, 0.2], scale: [1, 1.1, 1] }}
-                    transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-                    className="absolute top-[-10%] right-[-5%] w-[800px] h-[800px] bg-indigo-900/10 blur-[100px] rounded-full mix-blend-screen"
+                    style={{ y: y1 }}
+                    className="absolute top-[-20%] right-[-10%] w-[500px] h-[500px] sm:w-[900px] sm:h-[900px] bg-emerald-900/10 blur-[100px] sm:blur-[150px] rounded-full mix-blend-screen opacity-50"
                 />
                 <motion.div
-                    style={{ x: useTransform(bgX, v => v * -1.5), y: useTransform(bgY, v => v * -1.5) }}
-                    animate={{ opacity: [0.15, 0.3, 0.15], scale: [1.1, 1, 1.1] }}
-                    transition={{ duration: 15, repeat: Infinity, ease: "easeInOut", delay: 2 }}
-                    className="absolute bottom-[-10%] left-[-10%] w-[900px] h-[900px] bg-purple-900/5 blur-[120px] rounded-full mix-blend-screen"
+                    style={{ y: y2 }}
+                    className="absolute bottom-[-20%] left-[-10%] w-[500px] h-[500px] sm:w-[900px] sm:h-[900px] bg-blue-900/10 blur-[100px] sm:blur-[150px] rounded-full mix-blend-screen opacity-50"
                 />
-
-                {/* Optional Subtle Geometric Form (3D Cube-ish) */}
-                <motion.div
-                    style={{ x: bgX, y: bgY, rotate: 15 }}
-                    className="absolute top-1/4 left-1/4 w-96 h-96 border border-white/5 rounded-[4rem] opacity-20 blur-[2px] pointer-events-none"
-                    animate={{ rotate: [15, 45, 15] }}
-                    transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
-                />
-
-                {/* Scanlines / Noise Texture */}
-                <div className="absolute inset-0 bg-[url('/noise.svg')] opacity-[0.03] mix-blend-overlay" />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#030303] via-transparent to-transparent h-32 bottom-0" />
+                <div className="absolute inset-0 bg-[url('/noise.svg')] opacity-[0.04]" />
             </div>
 
-            <div className="container mx-auto px-6 md:px-12 relative z-10 flex flex-col md:flex-row items-center justify-between gap-16 lg:gap-24 max-w-7xl">
+            {/* 2. Main Layout */}
+            <div className="relative z-10 w-full max-w-6xl flex flex-col xl:flex-row items-center justify-between px-4 sm:px-8 gap-8 xl:gap-0 mt-4 sm:mt-8">
 
-                <FadeInStagger className="w-full md:w-3/5 lg:w-1/2 relative z-20">
+                {/* --- LEFT: Introduction / Identity Card --- */}
+                {/* MOVED TO TOP ON MOBILE (order-1) */}
+                <div className="xl:w-1/3 flex flex-col items-center xl:items-start relative z-50 order-1 xl:order-1 w-full sm:w-auto">
+                    <motion.div
+                        initial={{ opacity: 0, y: 30 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.8 }}
+                        className="w-full sm:w-[380px] p-6 sm:p-8 rounded-[2rem] bg-neutral-900/40 backdrop-blur-xl border border-white/5 shadow-2xl flex flex-col items-center xl:items-start text-center xl:text-left gap-4 sm:gap-6 group hover:border-emerald-500/20 transition-all duration-500 relative overflow-hidden"
+                    >
+                        {/* Subtle shine background */}
+                        <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
 
-                    {/* Live Status Ticker */}
-                    <FadeIn delay={0.1} className="flex items-center gap-3 mb-8">
-                        <div className="flex items-center gap-3 px-4 py-2 rounded-full bg-white/[0.03] border border-white/[0.08] backdrop-blur-md shadow-sm group hover:border-white/20 transition-colors cursor-default">
-                            <span className="relative flex h-2 w-2">
-                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                            </span>
-                            <span className="text-xs font-medium tracking-wide text-neutral-300 group-hover:text-white transition-colors">
-                                {ticker?.content || content?.status || "Online • Based in India"}
-                            </span>
+                        {/* Profile Header */}
+                        <div className="flex flex-col items-center xl:items-start gap-3 w-full relative z-10">
+                            <h2 className="text-[10px] sm:text-xs font-mono text-emerald-400 uppercase tracking-[0.2em] bg-emerald-500/5 px-4 py-1.5 rounded-full border border-emerald-500/10">Full Stack Architect</h2>
+                            <h1 className="text-4xl sm:text-5xl font-bold tracking-tight text-white mt-1">Mohit Ranjan</h1>
                         </div>
-                    </FadeIn>
 
-                    {/* Central Statement */}
-                    <div className="flex flex-col items-start gap-6">
-                        <FadeIn delay={0.2} className="relative z-10 w-full">
-                            <h1 className="text-5xl sm:text-7xl lg:text-[7rem] font-extrabold tracking-tight leading-[0.95] text-white flex flex-col items-start drop-shadow-2xl">
-                                {content?.heading ? (
-                                    <div
-                                        dangerouslySetInnerHTML={{ __html: content.heading }}
-                                        className="[&>span]:text-neutral-500 [&>span]:font-bold [&>br]:hidden md:[&>br]:block"
-                                    />
-                                ) : (
-                                    <>
-                                        <span className="block relative">
-                                            System
-                                            {/* Decorative element for depth */}
-                                            <span className="absolute -z-10 top-1/2 left-10 w-24 h-24 bg-blue-500/20 blur-3xl rounded-full"></span>
-                                        </span>
-                                        <span className="block pl-2 md:pl-20 text-neutral-500 font-bold transition-colors duration-500 hover:text-neutral-300">
-                                            Architect
-                                        </span>
-                                        <div className="flex items-center gap-4 w-full">
-                                            <span className="w-12 h-[2px] bg-neutral-800 hidden md:block mt-8"></span>
-                                            <span className="block text-transparent bg-clip-text bg-gradient-to-br from-white via-neutral-200 to-neutral-500">
-                                                & Maker
-                                            </span>
-                                        </div>
-                                    </>
-                                )}
-                            </h1>
-                        </FadeIn>
+                        <div className="w-12 h-[2px] bg-emerald-500/50 rounded-full" />
 
-                        <FadeIn delay={0.4} className="max-w-xl md:ml-auto mt-6 md:mt-8">
-                            <p className="text-lg md:text-xl font-light text-neutral-400 leading-relaxed md:text-right">
-                                {content?.subheading || (
-                                    <>
-                                        Designing <span className="text-white font-medium">autonomous agents</span> <br className="hidden md:block" />
-                                        and engineering <span className="text-white font-medium">distributed systems</span>.
-                                    </>
-                                )}
-                            </p>
+                        <p className="text-neutral-400 font-medium leading-relaxed text-sm sm:text-base">
+                            Crafting scalable digital ecosystems with precision engineering.
+                            <br /><span className="text-neutral-500 text-xs mt-2 block font-mono">GatewayID: 2026.1 • India • Remote</span>
+                        </p>
 
-                            {/* CTA / Quick Links Area - refined alignment */}
-                            <div className="flex items-center justify-end gap-6 mt-8">
-                                <Link
-                                    href="#context"
-                                    onClick={(e) => {
-                                        e.preventDefault();
-                                        document.getElementById('context')?.scrollIntoView({ behavior: 'smooth' });
-                                    }}
-                                    className="text-sm font-medium text-white/60 hover:text-white border-b border-white/10 hover:border-white/50 transition-all pb-0.5"
-                                >
-                                    Explore Context
-                                </Link>
-                                <Link
-                                    href={settings?.linkedin || "#"}
-                                    className="px-6 py-3 rounded-full bg-white text-black font-semibold text-sm hover:scale-105 hover:shadow-lg transition-transform"
-                                >
-                                    Let's Talk
-                                </Link>
+                        {/* Social Links */}
+                        <div className="flex gap-4 w-full justify-center xl:justify-start pt-2">
+                            <Link href="#" className="flex items-center justify-center w-10 h-10 bg-white/5 rounded-full hover:bg-white/10 hover:text-white hover:scale-110 transition-all text-neutral-400 border border-white/5"><Github size={18} /></Link>
+                            <Link href="#" className="flex items-center justify-center w-10 h-10 bg-white/5 rounded-full hover:bg-white/10 hover:text-blue-400 hover:scale-110 transition-all text-neutral-400 border border-white/5"><Linkedin size={18} /></Link>
+                            <Link href="#" className="flex items-center justify-center w-10 h-10 bg-white/5 rounded-full hover:bg-white/10 hover:text-sky-400 hover:scale-110 transition-all text-neutral-400 border border-white/5"><Twitter size={18} /></Link>
+                        </div>
+                    </motion.div>
+                </div>
+
+                {/* --- RIGHT: The "Creative Mines" Cluster --- */}
+                {/* Order 2 on mobile. Refined Stacking and Overlaps. */}
+                <div className="xl:w-2/3 flex flex-col items-center xl:items-end relative xl:pr-12 w-full order-2 xl:order-2 scale-[0.85] sm:scale-90 md:scale-100 origin-top xl:origin-right transform-gpu mt-6 sm:mt-0">
+
+                    {/* ROW 1: CODE + Terminal Bubble */}
+                    <div className="relative flex items-center xl:items-end justify-center xl:justify-end w-full mb-[-15px] sm:mb-[-25px] z-30 mr-0 xl:mr-[15%]">
+                        <motion.div
+                            custom={1}
+                            initial="hidden"
+                            animate="visible"
+                            variants={fadeInUp}
+                            className="relative group"
+                        >
+                            {/* Main Pill */}
+                            <div className="relative bg-white text-neutral-900 px-12 sm:px-14 py-6 sm:py-8 rounded-full shadow-[0_20px_50px_-10px_rgba(255,255,255,0.2)] flex items-center gap-4 hover:scale-[1.02] transition-transform duration-300 ring-4 ring-[#030303]">
+                                <h1 className="text-7xl sm:text-9xl font-bold tracking-tighter leading-none" style={{ fontFamily: 'var(--font-outfit)' }}>Code</h1>
                             </div>
-                        </FadeIn>
+
+                            {/* Attached Circle (Terminal) */}
+                            <motion.div
+                                variants={float}
+                                animate="animate"
+                                className="absolute -right-4 -top-6 sm:-right-6 sm:-top-8 w-16 h-16 sm:w-20 sm:h-20 bg-[#111] rounded-full border-[6px] border-[#030303] flex items-center justify-center text-emerald-400 shadow-2xl"
+                            >
+                                <Terminal size={24} className="sm:w-8 sm:h-8" />
+                            </motion.div>
+                        </motion.div>
                     </div>
 
-                </FadeInStagger>
 
-                {/* THE ID CARD - 3D Floating Glass Panel */}
-                <motion.div
-                    className="w-full md:w-2/5 lg:w-1/3 relative perspective-1000"
-                    style={{ perspective: 1000 }}
-                    initial={{ opacity: 0, x: 100, rotateY: -20 }}
-                    animate={{ opacity: 1, x: 0, rotateY: 0 }}
-                    transition={{ delay: 0.6, duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
-                >
-                    <motion.div
-                        style={{
-                            rotateX,
-                            rotateY,
-                            transformStyle: "preserve-3d"
-                        }}
-                        className="relative w-full aspect-[4/5] md:aspect-[3/4] max-w-sm mx-auto"
-                    >
-                        {/* Card Backdrop (Glass) */}
-                        <div className="absolute inset-0 rounded-[2rem] border border-white/10 bg-gradient-to-br from-white/[0.08] to-white/[0.02] backdrop-blur-2xl shadow-2xl transition-all duration-500"
-                            style={{ transform: "translateZ(0px)" }}
-                        />
+                    {/* ROW 2: BUILD + Status Bubble */}
+                    <div className="relative flex items-center justify-center w-full z-20 my-0">
+                        {/* Desktop Connector */}
+                        <svg className="absolute top-[-60px] left-[45%] w-40 h-40 z-0 pointer-events-none opacity-20 hidden xl:block" viewBox="0 0 100 100" fill="none">
+                            <path d="M80,0 Q80,60 10,90" stroke="white" strokeWidth="2" strokeDasharray="6 6" />
+                        </svg>
 
-                        {/* Glow Effect behind card */}
-                        <div className="absolute -inset-10 bg-indigo-500/20 blur-[60px] rounded-full -z-10" />
+                        <motion.div
+                            custom={2}
+                            initial="hidden"
+                            animate="visible"
+                            variants={fadeInUp}
+                            className="relative ml-0 xl:ml-[-15%] group"
+                        >
+                            {/* "Chat Bubble" - Tucked Closer */}
+                            <motion.div
+                                initial={{ scale: 0, opacity: 0 }}
+                                animate={{ scale: 1, opacity: 1 }}
+                                transition={{ delay: 0.5 }}
+                                className="absolute -left-8 -top-6 sm:-left-12 sm:-top-8 bg-[#1e1e1e] text-white px-3 py-1.5 sm:px-4 sm:py-2 rounded-2xl rounded-br-none border border-white/10 shadow-xl flex items-center gap-2 z-30 ring-4 ring-[#030303]"
+                            >
+                                <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-green-500 animate-pulse" />
+                                <span className="text-[10px] sm:text-xs font-mono font-bold">Compiling...</span>
+                            </motion.div>
 
-                        {/* Card Content Container */}
-                        <div className="relative h-full p-8 flex flex-col justify-between" style={{ transform: "translateZ(20px)" }}>
-
-                            {/* Top Section */}
-                            <div className="flex justify-between items-start">
-                                <motion.div
-                                    className="w-20 h-20 rounded-2xl bg-gradient-to-br from-neutral-800 to-black border border-white/10 flex items-center justify-center shadow-lg relative overflow-hidden group"
-                                    style={{ transform: "translateZ(30px)" }}
-                                    whileHover={{ scale: 1.05 }}
-                                >
-                                    <span className="text-3xl font-bold text-white relative z-10 group-hover:scale-110 transition-transform duration-300">M</span>
-                                    <div className="absolute inset-0 bg-blue-500/10 opacity-0 group-hover:opacity-100 transition-opacity" />
-                                </motion.div>
-                                <div className="flex flex-col items-end gap-1">
-                                    <BadgeCheck className="text-blue-500" size={24} style={{ filter: "drop-shadow(0 0 8px rgba(59,130,246,0.5))" }} />
-                                    <span className="text-[10px] uppercase tracking-widest text-neutral-500 font-bold">Verified</span>
-                                </div>
+                            {/* Main Pill */}
+                            <div className="relative bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 px-16 sm:px-20 py-7 sm:py-9 rounded-full shadow-2xl ring-4 ring-[#030303] flex items-center gap-4 z-20 hover:scale-[1.02] transition-transform duration-300">
+                                <h1 className="text-7xl sm:text-9xl font-bold tracking-tighter leading-none text-white" style={{ fontFamily: 'var(--font-outfit)' }}>Build</h1>
                             </div>
 
-                            {/* Middle Section - Identity */}
-                            <div className="space-y-6">
-                                <div style={{ transform: "translateZ(10px)" }}>
-                                    <h2 className="text-3xl font-bold text-white mb-2 tracking-tight">Mohit Ranjan</h2>
-                                    <div className="flex items-center gap-2 text-neutral-400 text-sm font-medium">
-                                        <MapPin size={14} className="text-indigo-400" />
-                                        <span>NIT Jalandhar, IN</span>
-                                    </div>
-                                </div>
-
-                                <div className="space-y-3 pt-6 border-t border-white/5">
-                                    <div className="flex justify-between items-center group">
-                                        <span className="text-xs text-neutral-500 font-mono uppercase group-hover:text-neutral-300 transition-colors">Role</span>
-                                        <span className="text-sm text-white font-medium flex items-center gap-2">
-                                            <Terminal size={12} className="text-neutral-500" />
-                                            Full Stack Engineer
-                                        </span>
-                                    </div>
-                                    <div className="flex justify-between items-center group">
-                                        <span className="text-xs text-neutral-500 font-mono uppercase group-hover:text-neutral-300 transition-colors">Focus</span>
-                                        <span className="text-sm text-white font-medium">AI Agents & Systems</span>
-                                    </div>
-                                    <div className="flex justify-between items-center pt-2">
-                                        <span className="text-xs text-neutral-500 font-mono uppercase">Status</span>
-                                        <span className="px-2.5 py-1 rounded-[4px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-bold uppercase tracking-wider shadow-[0_0_10px_rgba(16,185,129,0.1)]">
-                                            {ticker?.type === 'Status' ? 'Open to Work' : 'Online'}
-                                        </span>
-                                    </div>
-                                </div>
+                            {/* Attached Circle */}
+                            <div className="absolute -left-5 top-1/2 -translate-y-1/2 sm:-left-8 w-14 h-14 sm:w-18 sm:h-18 bg-white rounded-full border-[6px] border-[#030303] flex items-center justify-center text-blue-600 shadow-lg z-30">
+                                <Cpu size={24} className="sm:w-8 sm:h-8" />
                             </div>
+                        </motion.div>
+                    </div>
 
-                            {/* Bottom Section - Socials */}
-                            <div className="flex justify-between items-end pt-4" style={{ transform: "translateZ(10px)" }}>
-                                <div className="flex gap-4">
-                                    <Link href={settings?.github || "https://github.com/mohit0ranjan"} target="_blank" className="p-2 -ml-2 rounded-full hover:bg-white/10 text-neutral-400 hover:text-white transition-all">
-                                        <Github size={20} />
-                                    </Link>
-                                    <Link href={settings?.linkedin || "https://www.linkedin.com/in/itsmohitr/"} target="_blank" className="p-2 rounded-full hover:bg-white/10 text-neutral-400 hover:text-white transition-all">
-                                        <Linkedin size={20} />
-                                    </Link>
-                                </div>
-                                <Link
-                                    href={settings?.resume || "/resume.pdf"}
-                                    className="text-[10px] font-mono uppercase text-indigo-400 hover:text-indigo-300 transition-colors flex items-center gap-1 group/link"
-                                >
-                                    Resume
-                                    <span className="group-hover/link:translate-x-1 transition-transform">→</span>
+
+                    {/* ROW 3: SHIP + Arrow */}
+                    <div className="relative flex items-center xl:items-start justify-center xl:justify-end w-full mt-[-15px] sm:mt-[-25px] z-10 mr-0 xl:mr-[5%]">
+                        <motion.div
+                            custom={3}
+                            initial="hidden"
+                            animate="visible"
+                            variants={fadeInUp}
+                            className="relative flex items-center group"
+                        >
+                            {/* Main Pill */}
+                            <div className="relative bg-white text-neutral-900 px-14 sm:px-16 py-6 sm:py-8 rounded-full shadow-[0_20px_50px_-10px_rgba(255,255,255,0.15)] flex items-center gap-4 hover:scale-[1.02] transition-transform duration-300 z-20 ring-4 ring-[#030303]">
+                                <h1 className="text-7xl sm:text-9xl font-bold tracking-tighter leading-none" style={{ fontFamily: 'var(--font-outfit)' }}>Ship</h1>
+
+                                {/* CTA Arrow Button */}
+                                <Link href="/projects" className="ml-2 sm:ml-4 w-12 h-12 sm:w-14 sm:h-14 bg-emerald-500 rounded-full flex items-center justify-center text-white hover:bg-neutral-900 transition-colors shadow-lg">
+                                    <ArrowUpRight size={24} className="sm:w-8 sm:h-8" />
                                 </Link>
                             </div>
 
-                            {/* Shine Effect on Tilt */}
-                            <div className="absolute inset-0 rounded-[2rem] bg-gradient-to-tr from-transparent via-white/[0.03] to-transparent pointer-events-none" style={{ transform: "translateZ(1px)" }} />
-                        </div>
-                    </motion.div>
-                </motion.div>
+                            {/* "Chat Bubble" - Tucked Closer */}
+                            <motion.div
+                                initial={{ scale: 0, opacity: 0 }}
+                                animate={{ scale: 1, opacity: 1 }}
+                                transition={{ delay: 0.8 }}
+                                className="absolute -right-2 -bottom-6 sm:-right-4 sm:-bottom-8 bg-emerald-500/10 text-emerald-400 px-3 py-1.5 sm:px-4 sm:py-2 rounded-2xl rounded-tl-none border border-emerald-500/20 shadow-xl flex items-center gap-2 z-10 backdrop-blur-md ring-4 ring-[#030303]"
+                            >
+                                <CheckCircle2 size={12} className="sm:w-3.5 sm:h-3.5" />
+                                <span className="text-[10px] sm:text-xs font-bold">Deployed</span>
+                            </motion.div>
 
-                {/* Bottom Anchor - Refined */}
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 1.2, duration: 1 }}
-                    className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 z-20 pointer-events-none md:pointer-events-auto"
-                >
-                    <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-neutral-600">Scroll</span>
-                    <motion.div
-                        animate={{ y: [0, 5, 0] }}
-                        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                    >
-                        <ArrowDown size={14} className="text-neutral-600" />
-                    </motion.div>
-                </motion.div>
+                            {/* Decorative Profile Circle */}
+                            <div className="absolute -left-5 top-1/2 -translate-y-1/2 sm:-left-8 w-16 h-16 sm:w-20 sm:h-20 bg-[#111] rounded-full border-[6px] border-[#030303] flex items-center justify-center overflow-hidden z-10 shadow-lg">
+                                <span className="text-white font-bold text-lg sm:text-xl">MR</span>
+                            </div>
+
+                        </motion.div>
+                    </div>
+
+                </div>
 
             </div>
+
+            {/* 3. Bottom Tech Context (Separate Cluster) */}
+            <div className="absolute bottom-6 sm:bottom-12 w-full flex justify-center gap-6 sm:gap-10 opacity-50 pointer-events-none">
+                <div className="flex items-center gap-2 text-[10px] sm:text-sm font-bold text-neutral-500 uppercase tracking-wider"><Layers size={14} className="sm:w-4 sm:h-4" /> Next.js 15</div>
+                <div className="flex items-center gap-2 text-[10px] sm:text-sm font-bold text-neutral-500 uppercase tracking-wider"><Box size={14} className="sm:w-4 sm:h-4" /> Rust</div>
+                <div className="flex items-center gap-2 text-[10px] sm:text-sm font-bold text-neutral-500 uppercase tracking-wider"><Cloud size={14} className="sm:w-4 sm:h-4" /> AWS Native</div>
+            </div>
+
         </section>
     );
 }
