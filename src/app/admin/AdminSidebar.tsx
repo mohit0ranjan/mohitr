@@ -17,7 +17,8 @@ import {
     Radio,
     LogOut,
     ExternalLink,
-    LayoutTemplate
+    LayoutTemplate,
+    Trophy
 } from "lucide-react"
 
 export function AdminSidebar() {
@@ -39,6 +40,7 @@ export function AdminSidebar() {
             label: "Professional",
             items: [
                 { href: "/admin/opportunities", label: "Opportunities", icon: Briefcase },
+                { href: "/admin/hackathons", label: "Hackathons", icon: Trophy },
                 { href: "/admin/timeline", label: "Timeline", icon: History },
                 { href: "/admin/capabilities", label: "Capabilities", icon: Zap },
             ]

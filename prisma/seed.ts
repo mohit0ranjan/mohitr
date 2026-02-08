@@ -305,6 +305,82 @@ This residency is designed to jumpstart your career in AI Research. You will wor
         })
     }
 
+
+    // 8. HACKATHONS
+    const hackathons = [
+        {
+            name: "ETHGlobal San Francisco",
+            slug: "ethglobal-sf-2026",
+            organizer: "ETHGlobal",
+            website: "https://ethglobal.com",
+            location: "San Francisco, CA",
+            mode: "Offline",
+            startDate: new Date("2026-10-16"),
+            endDate: new Date("2026-10-18"),
+            status: "Upcoming",
+            tags: "Web3, Blockchain, Ethereum",
+            description: "The world's largest Ethereum hackathon series comes back to SF.",
+            isFeatured: true,
+            imageUrl: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&q=80"
+        },
+        {
+            name: "Google AI Challenge",
+            slug: "google-ai-challenge-2026",
+            organizer: "Google",
+            website: "https://ai.google.dev",
+            location: "Global",
+            mode: "Online",
+            startDate: new Date("2026-03-01"),
+            endDate: new Date("2026-03-15"),
+            status: "Open",
+            tags: "AI, Machine Learning, Gemini",
+            description: "Build the next generation of AI apps using Gemini models.",
+            isFeatured: true,
+            imageUrl: "https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?auto=format&fit=crop&q=80"
+        },
+        {
+            name: "StarkNet Hack",
+            slug: "starknet-hack-2026",
+            organizer: "StarkWare",
+            website: "https://starknet.io",
+            location: "Berlin / Online",
+            mode: "Hybrid",
+            startDate: new Date("2026-04-10"),
+            endDate: new Date("2026-04-12"),
+            status: "Upcoming",
+            tags: "ZK-Rollups, Cairo, Layer 2",
+            description: "Push the boundaries of scaling on Ethereum with StarkNet.",
+            isFeatured: false,
+            imageUrl: "https://images.unsplash.com/photo-1639762681485-074b7f938ba0?auto=format&fit=crop&q=80"
+        },
+        { // Past Event for testing filters
+            name: "NASA Space Apps 2025",
+            slug: "nasa-space-apps-2025",
+            organizer: "NASA",
+            website: "https://spaceappschallenge.org",
+            location: "Global",
+            mode: "Hybrid",
+            startDate: new Date("2025-10-02"),
+            endDate: new Date("2025-10-04"),
+            status: "Closed",
+            tags: "Space, Data Science, Earth",
+            description: "Solve challenges submitted by NASA personnel and space agency partners.",
+            isFeatured: false,
+            imageUrl: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80"
+        }
+    ]
+
+    for (const h of hackathons) {
+        // Need to match the schema created. 
+        // Schema: name, slug, organizer, website, location, mode, startDate, endDate, description, tags, status, isFeatured, imageUrl
+        await prisma.hackathon.upsert({
+            where: { slug: h.slug },
+            update: {},
+            create: h
+        })
+    }
+    console.log('🏆 Hackathons seeded')
+
     console.log('✅ Seeding finished.')
 }
 

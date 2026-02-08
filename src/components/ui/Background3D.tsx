@@ -1,183 +1,163 @@
 "use client";
 
-import { Canvas, useFrame } from "@react-three/fiber";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Suspense, useRef, useMemo } from "react";
 import { MotionValue } from "framer-motion";
 import * as THREE from "three";
-import { Text, Float, MeshTransmissionMaterial, Stars } from "@react-three/drei";
+import { Points, PointMaterial } from "@react-three/drei";
 
-// --- HELPERS (Pure functions or outside component scope to satisfy lint) ---
-
-function generateRandomRotation(): [number, number, number] {
-    return [Math.random(), Math.random(), Math.random()];
-}
-
-function generateTunnelPoints(count: number): Float32Array {
-    const pos = new Float32Array(count * 3);
-    for (let i = 0; i < count; i++) {
-        const theta = Math.random() * 2 * Math.PI;
-        const r = 5 + Math.random() * 5;
-        const z = -Math.random() * 100;
-
-        pos[i * 3] = r * Math.cos(theta);
-        pos[i * 3 + 1] = r * Math.sin(theta);
-        pos[i * 3 + 2] = z;
-    }
-    return pos;
-}
-
-// --- SCENE CONTENT ---
-
-function HeroPortal() {
+function ParticleField() {
     return (
-        <group position={[0, 0, -5]}>
-            <Float speed={2} rotationIntensity={0.5} floatIntensity={1}>
-                {/* Main Ring */}
-                <mesh rotation={[0, 0, Math.PI / 4]}>
-                    <torusGeometry args={[3, 0.05, 16, 100]} />
-                    <meshStandardMaterial color="#4f46e5" emissive="#4f46e5" emissiveIntensity={5} toneMapped={false} />
-                </mesh>
+        <group>
+            {/* Subtle distant starfield for depth */}
+            <Stars count={3000} radius={150} />
 
-                {/* Secondary Ring */}
-                <mesh rotation={[0, 0, -Math.PI / 4]} scale={0.8}>
-                    <torusGeometry args={[3, 0.05, 16, 100]} />
-                    <meshStandardMaterial color="#818cf8" emissive="#818cf8" emissiveIntensity={2} toneMapped={false} />
-                </mesh>
-
-                {/* Central Prism (The "Monolith") */}
-                <mesh position={[0, 0, 0]}>
-                    <octahedronGeometry args={[1.5, 0]} />
-                    <MeshTransmissionMaterial
-                        backside
-                        thickness={2}
-                        roughness={0}
-                        transmission={1}
-                        ior={1.5}
-                        chromaticAberration={0.2}
-                        background={new THREE.Color('#030303')}
-                        color="#a5b4fc"
-                    />
-                </mesh>
-            </Float>
-            <pointLight position={[0, 0, 0]} intensity={2} color="#4f46e5" distance={10} />
+            {/* Interactive nearby particles */}
+            <InteractiveParticles count={150} />
         </group>
     );
 }
 
-function FloatingTech({ z, x, title }: { z: number, x: number, title: string }) {
-    // Memoize random values
-    const randomRot1 = useMemo(() => generateRandomRotation(), []);
-    const randomRot2 = useMemo(() => generateRandomRotation(), []);
+function Stars({ count = 5000, radius = 100 }) {
+    const points = useRef<THREE.Points>(null);
 
-    return (
-        <group position={[x, 0, z]}>
-            <Float rotationIntensity={1} floatIntensity={1} speed={2}>
-                <mesh rotation={randomRot1}>
-                    <icosahedronGeometry args={[0.8, 0]} />
-                    <meshStandardMaterial color="#333" wireframe />
-                </mesh>
-                <mesh rotation={randomRot2} scale={0.5}>
-                    <boxGeometry />
-                    <meshBasicMaterial color="#4f46e5" wireframe />
-                </mesh>
-            </Float>
-            <Text
-                position={[x > 0 ? -1.5 : 1.5, 0, 0]}
-                fontSize={0.4}
-                color="white"
-                anchorX={x > 0 ? "right" : "left"}
-                anchorY="middle"
-            >
-                {title}
-            </Text>
-        </group>
-    )
-}
+    const positions = useMemo(() => {
+        const pos = new Float32Array(count * 3);
+        for (let i = 0; i < count; i++) {
+            const r = Math.random() * radius;
+            const theta = Math.random() * 2 * Math.PI;
+            const phi = Math.acos(2 * Math.random() - 1);
 
-function DataTunnel() {
-    const pointsRef = useRef<THREE.Points>(null);
-    const count = 2000;
+            const x = r * Math.sin(phi) * Math.cos(theta);
+            const y = r * Math.sin(phi) * Math.sin(theta);
+            const z = r * Math.cos(phi);
 
-    const [positions] = useMemo(() => {
-        return [generateTunnelPoints(count)];
-    }, []);
+            pos[i * 3] = x;
+            pos[i * 3 + 1] = y;
+            pos[i * 3 + 2] = z;
+        }
+        return pos;
+    }, [count, radius]);
 
     useFrame((state) => {
-        if (!pointsRef.current) return;
-        pointsRef.current.rotation.z = state.clock.getElapsedTime() * 0.05;
+        if (!points.current) return;
+        // Extremely slow rotation for "night sky" feel
+        points.current.rotation.y = state.clock.getElapsedTime() * 0.01;
+        points.current.rotation.x = state.clock.getElapsedTime() * 0.005;
     });
 
     return (
-        <points ref={pointsRef}>
-            <bufferGeometry>
-                <bufferAttribute
-                    attach="attributes-position"
-                    args={[positions, 3]}
-                />
-            </bufferGeometry>
-            <pointsMaterial size={0.03} color="#4f46e5" transparent opacity={0.6} sizeAttenuation />
-        </points>
+        <Points ref={points} positions={positions} stride={3} frustumCulled={false}>
+            <PointMaterial
+                transparent
+                color="#64748b" // Slate-500
+                size={0.05}
+                sizeAttenuation={true}
+                depthWrite={false}
+                opacity={0.4}
+            />
+        </Points>
     );
 }
 
-function SceneCamera({ scrollY }: { scrollY: MotionValue<number> }) {
+function InteractiveParticles({ count = 100 }) {
+    const mesh = useRef<THREE.InstancedMesh>(null);
+    const { viewport, mouse } = useThree();
+
+    // Create random initial positions for particles
+    const dummy = useMemo(() => new THREE.Object3D(), []);
+    const particles = useMemo(() => {
+        const temp = [];
+        const width = viewport.width * 2; // Spread wider than screen
+        const height = viewport.height * 2;
+
+        for (let i = 0; i < count; i++) {
+            const t = Math.random() * 100;
+            const factor = 20 + Math.random() * 100;
+            const speed = 0.01 + Math.random() / 200;
+            const x = (Math.random() - 0.5) * width;
+            const y = (Math.random() - 0.5) * height;
+            const z = (Math.random() - 0.5) * 20; // Some depth
+
+            temp.push({ t, factor, speed, x, y, z, originalX: x, originalY: y, originalZ: z });
+        }
+        return temp;
+    }, [count, viewport]);
+
     useFrame((state) => {
-        // Map scroll (0-1) to Z depth (0 to -40)
-        // Camera starts at Z=5
-        const targetZ = 5 - (scrollY.get() * 45);
+        if (!mesh.current) return;
 
-        // Smooth follow
-        state.camera.position.z = THREE.MathUtils.lerp(state.camera.position.z, targetZ, 0.05);
+        particles.forEach((particle, i) => {
+            let { t, speed, x, y, z, originalX, originalY } = particle;
 
-        // Look slightly ahead
-        state.camera.lookAt(0, 0, targetZ - 10);
+            // Natural easy drift
+            t = particle.t += speed;
+            const driftX = Math.cos(t) * 0.5;
+            const driftY = Math.sin(t) * 0.5;
 
-        // Mouse parallax (subtle)
-        const { x, y } = state.pointer;
-        state.camera.position.x = THREE.MathUtils.lerp(state.camera.position.x, x * 2, 0.05);
-        state.camera.position.y = THREE.MathUtils.lerp(state.camera.position.y, y * 2, 0.05);
+            // Mouse interaction (repel)
+            const mouseX = (mouse.x * viewport.width) / 2;
+            const mouseY = (mouse.y * viewport.height) / 2;
+
+            // Calculate distance to mouse
+            const dx = (originalX + driftX) - mouseX;
+            const dy = (originalY + driftY) - mouseY;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+
+            let repelX = 0;
+            let repelY = 0;
+
+            if (dist < 4) {
+                const force = (4 - dist) / 4;
+                repelX = dx * force * 0.5;
+                repelY = dy * force * 0.5;
+            }
+
+            dummy.position.set(
+                originalX + driftX + repelX,
+                originalY + driftY + repelY,
+                z
+            );
+
+            // Subtle pulse
+            const s = 0.5 + Math.abs(Math.sin(t * 2)) * 0.5;
+            dummy.scale.set(s, s, s);
+
+            dummy.updateMatrix();
+            mesh.current!.setMatrixAt(i, dummy.matrix);
+        });
+
+        mesh.current.instanceMatrix.needsUpdate = true;
     });
 
-    return null;
-}
-
-function SceneContent({ scrollY }: { scrollY: MotionValue<number> }) {
     return (
-        <>
-            <fog attach="fog" args={['#030303', 5, 25]} />
-            <ambientLight intensity={0.5} />
-
-            <SceneCamera scrollY={scrollY} />
-
-            <HeroPortal />
-
-            {/* Tunnel Effect */}
-            <DataTunnel />
-
-            <Stars radius={100} depth={50} count={5000} factor={4} saturation={0} fade speed={1} />
-
-            {/* Floating Markers acting as "Stations" in the void */}
-            <FloatingTech z={-10} x={4} title="PROJECTS" />
-            <FloatingTech z={-18} x={-4} title="EXPERTISE" />
-            <FloatingTech z={-28} x={4} title="JOURNEY" />
-            <FloatingTech z={-38} x={-4} title="CONTACT" />
-
-            {/* Grid Floor */}
-            <gridHelper args={[100, 50, 0x222222, 0x050505]} position={[0, -4, -50]} rotation={[0, 0, 0]} />
-        </>
+        <instancedMesh ref={mesh} args={[undefined, undefined, count]}>
+            <sphereGeometry args={[0.03, 16, 16]} />
+            <meshBasicMaterial color="#94a3b8" transparent opacity={0.6} /> {/* Slate-400 */}
+        </instancedMesh>
     );
 }
 
 export default function Background3D({ scrollYProgress }: { scrollYProgress: MotionValue<number> }) {
     return (
-        <div className="fixed inset-0 -z-10 h-full w-full pointer-events-none fade-in-0 duration-1000 transition-opacity">
-            <Canvas camera={{ position: [0, 0, 5], fov: 60 }} gl={{ antialias: true, alpha: true }}>
+        <div className="fixed inset-0 -z-10 h-full w-full bg-[#050505]">
+            <Canvas camera={{ position: [0, 0, 10], fov: 60 }} gl={{ antialias: true, alpha: false }}>
                 <Suspense fallback={null}>
-                    <SceneContent scrollY={scrollYProgress} />
+                    {/* Add fog for depth fading */}
+                    <fog attach="fog" args={['#050505', 10, 50]} />
+                    <ParticleField />
                 </Suspense>
             </Canvas>
-            {/* Overlay gradient for readability */}
-            <div className="absolute inset-0 bg-gradient-to-t from-[#030303] via-transparent to-[#030303] opacity-60" />
+
+            {/* Visual Noise Overlay for texture */}
+            <div className="absolute inset-0 opacity-[0.03] pointer-events-none"
+                style={{
+                    backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`
+                }}
+            />
+
+            {/* Vignette */}
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.6)_100%)] pointer-events-none" />
         </div>
     );
 }

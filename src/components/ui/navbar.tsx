@@ -1,10 +1,11 @@
 "use client";
+
 import React, { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
-import { Menu, X } from "lucide-react";
 import { usePathname } from "next/navigation";
-
+import { motion, AnimatePresence } from "framer-motion";
+import { Github, Menu, X, Command } from "lucide-react";
 import SearchModal from "./search-modal";
 
 interface NavbarProps {
@@ -19,7 +20,7 @@ export default function Navbar({ posts = [], opportunities = [] }: NavbarProps) 
 
     useEffect(() => {
         const handleScroll = () => {
-            setScrolled(window.scrollY > 50);
+            setScrolled(window.scrollY > 20);
         };
         window.addEventListener("scroll", handleScroll);
         return () => window.removeEventListener("scroll", handleScroll);
@@ -34,96 +35,133 @@ export default function Navbar({ posts = [], opportunities = [] }: NavbarProps) 
         { name: "Projects", href: "/projects" },
         { name: "Tools", href: "/tools" },
         { name: "Blog", href: "/blog" },
-        { name: "Opportunities", href: "/opportunities" },
+        { name: "Opps", href: "/opportunities", full: "Opportunities" }, // Shortened for space
+        { name: "Hackathons", href: "/hackathons" },
         { name: "About", href: "/about" },
     ];
 
     return (
-        <nav
-            className={cn(
-                "fixed top-0 left-0 right-0 z-50 transition-all duration-300 px-4 md:px-8 py-4 flex justify-center",
-                scrolled ? "pt-4" : "pt-6"
-            )}
-        >
-            <div
+        <>
+            <motion.nav
+                initial={{ y: -100, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ duration: 0.5, ease: "circOut" }}
                 className={cn(
-                    "flex items-center justify-between transition-all duration-500 rounded-full px-6 py-3 w-full max-w-4xl shadow-2xl relative group/nav",
-                    "border border-white/10 overflow-hidden",
-                    scrolled
-                        ? "bg-black/80 backdrop-blur-xl"
-                        : "bg-black/40 backdrop-blur-md"
+                    "fixed top-0 left-0 right-0 z-50 flex justify-center items-start pt-6 px-4 pointer-events-none"
                 )}
             >
-                {/* Background Gradient Effect */}
-                <div className="absolute inset-0 bg-gradient-to-r from-accent-blue/5 via-accent-purple/5 to-accent-teal/5 opacity-0 group-hover/nav:opacity-100 transition-opacity duration-700 pointer-events-none" />
-                <div className="absolute -inset-[1px] bg-gradient-to-r from-accent-blue/20 via-accent-purple/20 to-accent-teal/20 rounded-full opacity-0 group-hover/nav:opacity-100 transition-opacity duration-700 -z-10 blur-sm pointer-events-none" />
+                <div
+                    className={cn(
+                        "pointer-events-auto flex items-center gap-1 p-1.5 rounded-full transition-all duration-500 ease-out border border-white/5",
+                        scrolled
+                            ? "bg-[#0a0a0a]/80 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.5)] scale-[0.98]"
+                            : "bg-[#0a0a0a]/50 backdrop-blur-md shadow-[0_4px_24px_rgba(0,0,0,0.2)]"
+                    )}
+                >
+                    {/* Logo Pill */}
+                    <Link
+                        href="/"
+                        className="flex items-center justify-center px-4 py-2 rounded-full bg-white/5 hover:bg-white/10 transition-colors border border-white/5 group"
+                    >
+                        <span className="font-bold text-sm tracking-tight text-white group-hover:text-indigo-400 transition-colors">
+                            MR
+                        </span>
+                    </Link>
 
-                <Link href="/" className="group flex items-center gap-1.5">
-                    <span className="text-xl font-black tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-white via-white/90 to-white/70 group-hover:from-accent-blue group-hover:to-accent-purple transition-all duration-500">
-                        Mohit
-                    </span>
-                    <span className="h-1.5 w-1.5 rounded-full bg-accent-blue animate-pulse" />
-                </Link>
+                    {/* Desktop Navigation */}
+                    <div className="hidden md:flex items-center bg-white/5 rounded-full px-2 py-1 border border-white/5">
+                        {links.map((link) => {
+                            const isActive = pathname === link.href || (link.href !== '/' && pathname?.startsWith(link.href));
+                            return (
+                                <Link
+                                    key={link.href}
+                                    href={link.href}
+                                    className="relative px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-300 group"
+                                >
+                                    {isActive && (
+                                        <motion.div
+                                            layoutId="nav-pill"
+                                            className="absolute inset-0 bg-white/10 rounded-full"
+                                            transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                                        />
+                                    )}
+                                    <span className={cn(
+                                        "relative z-10 transition-colors duration-300",
+                                        isActive ? "text-white" : "text-neutral-400 group-hover:text-neutral-200"
+                                    )}>
+                                        {link.name}
+                                    </span>
+                                </Link>
+                            )
+                        })}
+                    </div>
 
-                {/* Desktop Menu */}
-                <div className="hidden md:flex items-center gap-8">
-                    {links.map((link) => (
-                        <Link
-                            key={link.name}
-                            href={link.href}
-                            className={cn(
-                                "text-sm font-bold transition-all duration-300 relative group/link",
-                                pathname === link.href ? "text-white" : "text-neutral-400 hover:text-white"
-                            )}
+                    {/* Right Actions */}
+                    <div className="flex items-center gap-1 pl-1">
+                        <div className="rounded-full hover:bg-white/5 transition-colors">
+                            <SearchModal posts={posts} opportunities={opportunities} />
+                        </div>
+
+                        <a
+                            href="https://github.com/mohit0ranjan"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="hidden md:flex items-center justify-center w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 border border-white/5 transition-all text-neutral-400 hover:text-white"
                         >
-                            {link.name}
-                            <span className={cn(
-                                "absolute -bottom-1 left-0 w-0 h-[1.5px] bg-accent-blue transition-all duration-300 rounded-full",
-                                pathname === link.href ? "w-full" : "group-hover/link:w-full"
-                            )} />
-                        </Link>
-                    ))}
-                </div>
+                            <Github className="w-4 h-4" />
+                        </a>
 
-                <div className="hidden md:flex items-center gap-4">
-                    <SearchModal posts={posts} opportunities={opportunities} />
-                    <a
-                        href="https://github.com/mohit0ranjan"
-                        target="_blank"
-                        className="text-xs font-mono bg-white/5 border border-white/10 px-4 py-2 rounded-full hover:bg-white/10 hover:border-white/20 transition-all duration-300 flex items-center gap-2 group"
-                    >
-                        <span className="text-neutral-500 group-hover:text-neutral-300 transition-opacity">gh/</span>
-                        <span className="font-bold text-white">mohit0ranjan</span>
-                    </a>
+                        {/* Mobile Toggle */}
+                        <button
+                            onClick={() => setMobileOpen(!mobileOpen)}
+                            className="md:hidden flex items-center justify-center w-9 h-9 rounded-full bg-white/5 hover:bg-white/10 text-white transition-colors"
+                        >
+                            {mobileOpen ? <X size={16} /> : <Menu size={16} />}
+                        </button>
+                    </div>
                 </div>
-
-                {/* Mobile Toggle */}
-                <div className="flex items-center gap-4 md:hidden">
-                    <SearchModal posts={posts} opportunities={opportunities} />
-                    <button
-                        className="text-white"
-                        onClick={() => setMobileOpen(!mobileOpen)}
-                    >
-                        {mobileOpen ? <X size={24} /> : <Menu size={24} />}
-                    </button>
-                </div>
-            </div>
+            </motion.nav>
 
             {/* Mobile Menu Overlay */}
-            {mobileOpen && (
-                <div className="absolute top-20 left-4 right-4 bg-black/90 border border-white/10 rounded-2xl p-6 flex flex-col gap-4 md:hidden shadow-2xl backdrop-blur-xl animate-in fade-in slide-in-from-top-4">
-                    {links.map((link) => (
-                        <Link
-                            key={link.name}
-                            href={link.href}
-                            className="text-lg font-medium text-white py-2 border-b border-white/5"
-                            onClick={() => setMobileOpen(false)}
+            <AnimatePresence>
+                {mobileOpen && (
+                    <motion.div
+                        initial={{ opacity: 0, y: -20, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: -20, scale: 0.95 }}
+                        transition={{ duration: 0.2 }}
+                        className="fixed top-24 left-4 right-4 z-40 bg-[#0a0a0a]/90 backdrop-blur-2xl border border-white/10 rounded-2xl p-4 shadow-2xl md:hidden flex flex-col gap-2 origin-top"
+                    >
+                        {links.map((link) => (
+                            <Link
+                                key={link.href}
+                                href={link.href}
+                                onClick={() => setMobileOpen(false)}
+                                className={cn(
+                                    "flex items-center justify-between p-4 rounded-xl transition-all",
+                                    pathname === link.href
+                                        ? "bg-white/10 text-white"
+                                        : "hover:bg-white/5 text-neutral-400 hover:text-white"
+                                )}
+                            >
+                                <span className="text-sm font-medium">{link.full || link.name}</span>
+                                {pathname === link.href && (
+                                    <div className="w-1.5 h-1.5 rounded-full bg-indigo-500" />
+                                )}
+                            </Link>
+                        ))}
+                        <div className="h-px bg-white/5 my-2" />
+                        <a
+                            href="https://github.com/mohit0ranjan"
+                            target="_blank"
+                            className="flex items-center gap-3 p-4 rounded-xl hover:bg-white/5 text-neutral-400 hover:text-white transition-all"
                         >
-                            {link.name}
-                        </Link>
-                    ))}
-                </div>
-            )}
-        </nav>
+                            <Github className="w-4 h-4" />
+                            <span className="text-sm font-medium">GitHub Profile</span>
+                        </a>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+        </>
     );
 }

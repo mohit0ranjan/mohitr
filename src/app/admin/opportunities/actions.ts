@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache"
 import { redirect } from "next/navigation"
 import { extractFromImage, extractFromLink, parseOpportunityData } from "@/lib/opportunity-parser"
 import slugify from "slugify"
+import { fetchEventDetails } from "../hackathons/fetch-metadata" // Reuse existing logic
 
 export async function deleteOpportunity(id: string) {
     if (!id) return
@@ -72,10 +73,6 @@ export async function saveOpportunity(formData: FormData) {
         if (isNew) {
             await prisma.opportunity.create({ data })
         } else {
-            // Check if slug exists to avoid unique constraint error if changed manually to existing one?
-            // Usually we trust the admin know what they are doing or handle error.
-            // For update, we might not update slug if not changed.
-            // But let's keep it simple.
             await prisma.opportunity.update({
                 where: { id },
                 data
@@ -100,6 +97,10 @@ export async function extractOpportunityData(formData: FormData) {
         let extractedText = "";
         let extractedTitle = "";
         let extractedImage = "";
+        let extractedCompany = "";
+        let extractedRole = "";
+        let extractedLocation = "";
+        let extractedApplyLink = "";
 
         if (type === 'image') {
             const file = formData.get('file') as File;
@@ -112,25 +113,48 @@ export async function extractOpportunityData(formData: FormData) {
             extractedText = formData.get('text') as string;
         } else if (type === 'link') {
             const url = formData.get('url') as string;
-            const result = await extractFromLink(url);
-            extractedText = result.text;
-            extractedTitle = result.title;
-            extractedImage = result.imageUrl || "";
+
+            // NEW: Enhanced Unstop/LinkedIn Support
+            if (url.includes("unstop.com") || url.includes("linkedin.com")) {
+                const metadata = await fetchEventDetails(url);
+                if (metadata) {
+                    extractedTitle = metadata.name;
+                    extractedCompany = metadata.organizer;
+                    extractedText = metadata.description; // Unstop/LinkedIn usually have less detail in OG description
+                    extractedImage = metadata.imageUrl;
+                    extractedApplyLink = url;
+                    // Try to scrape body for more text if metadata description is short
+                    // But fetchEventDetails only does metadata.
+                    // Let's use cleanText + metadata as a starting point.
+                }
+            }
+
+            // Fallback to generic link extractor if metadata failed or we want more body text
+            if (!extractedText || extractedText.length < 200) {
+                const result = await extractFromLink(url);
+                extractedText = result.text; // Confirmed body text
+                if (!extractedTitle) extractedTitle = result.title;
+                if (!extractedImage) extractedImage = result.imageUrl || "";
+            }
+
+            extractedApplyLink = url;
         }
 
         if (!extractedText) {
             return { success: false, error: "No text could be extracted." };
         }
 
+        // Parse using existing logic but override with metadata if strong
         const parsedData = parseOpportunityData(extractedText, extractedTitle);
 
-        // Return structured data for review
         return {
             success: true,
             data: {
                 ...parsedData,
-                imageUrl: extractedImage || "/placeholder-opportunity.png", // Use extracted image if link, else placeholder
-                sourceUrl: type === 'link' ? formData.get('url') as string : undefined
+                role: extractedTitle || parsedData.role, // Prefer metadata title if available
+                company: extractedCompany || parsedData.company,
+                imageUrl: extractedImage || "/placeholder-opportunity.png",
+                applyLink: extractedApplyLink || parsedData.applyLink
             }
         };
 
@@ -149,23 +173,15 @@ export async function publishOpportunity(prevState: any, formData: FormData) {
         const fullDescription = formData.get("fullDescription")?.toString() || ""
 
         // STRICT RULE: Manual Apply Link Priority
-        // Check if manual link field has content. If so, use it. 
-        // If not, use 'applyLink' which might be passed from extraction (but extraction puts it in a field named 'applyLink' too).
-        // Wait, in the form, the input name IS 'applyLink'.
-        // So whatever is submitted in the form IS the manual override or the confirmed link.
         const applyLink = formData.get("applyLink")?.toString() || ""
 
         const imageUrl = formData.get("imageUrl")?.toString() || "/placeholder-opportunity.png"
 
-        // Create SEO-Friendly Slug
-        // Rule: /opportunities/company-role (clean, short)
-        // Remove '2026' or dates from slug base to keep it evergreen and clean unless collision.
         let slugBase = `${company}-${title}`;
-        slugBase = slugBase.replace(/['".,!?:;&]/g, '').trim(); // Remove basic punctuation
+        slugBase = slugBase.replace(/['".,!?:;&]/g, '').trim();
 
         let baseSlug = slugify(slugBase, { lower: true, strict: true, trim: true });
 
-        // Ensure slug isn't empty (fallback)
         if (!baseSlug) baseSlug = "opportunity";
 
         let slug = baseSlug;
@@ -191,17 +207,10 @@ export async function publishOpportunity(prevState: any, formData: FormData) {
 
         const opportunity = await prisma.opportunity.create({ data });
 
-        // LinkedIn Post Generation
-
         const websiteUrl = process.env.NEXT_PUBLIC_APP_URL || "https://www.mohitr.in";
 
-        // Option 1: Standardized Clean
         const template1 = `🚨 New Internship Opportunity\n\nCompany: ${company}\nRole: ${title}\nLocation: ${location}\n\nApply & full details:\n👉 ${websiteUrl}/opportunities/${slug}\n\n#internships #careers #students`;
-
-        // Option 2: Ultra-Crisp
         const template2 = `🔥 Internship Alert: ${title} at ${company}\n📍 ${location}\n🔗 Details: ${websiteUrl}/opportunities/${slug}\n\n#hiring #internship`;
-
-        // Option 3: Direct/Professional
         const template3 = `Hiring: ${title} @ ${company}\nLocation: ${location}\nApply here: ${websiteUrl}/opportunities/${slug}\n\n#students #careers`;
 
         const linkedInPost = `${template1}\n\n---\n\n${template2}\n\n---\n\n${template3}`;

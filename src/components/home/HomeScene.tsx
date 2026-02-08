@@ -15,9 +15,10 @@ import CurrentFocus from "@/components/sections/CurrentFocus";
 import Capabilities from "@/components/sections/Capabilities";
 import { Section3D } from "@/components/ui/Section3D";
 import SmoothScroll from "@/components/ui/SmoothScroll";
-import Background3D from "@/components/ui/Background3D"; // Import the new R3F component
+import Background3D from "@/components/ui/Background3D";
+import HackathonPreview from "@/components/sections/HackathonPreview";
+import ActiveStreams from "@/components/sections/ActiveStreams";
 
-// Types for props passed from page.tsx (using any for now as requested, but ideally should be typed)
 interface HomeSceneProps {
     heroContent: any;
     settings: any;
@@ -31,6 +32,7 @@ interface HomeSceneProps {
     timelineItems: any[];
     formattedGalleryItems: any[];
     formattedPosts: any[];
+    hackathons: any[]; // Add this
 }
 
 export default function HomeScene({
@@ -45,7 +47,8 @@ export default function HomeScene({
     capabilities,
     timelineItems,
     formattedGalleryItems,
-    formattedPosts
+    formattedPosts,
+    hackathons // Destructure this
 }: HomeSceneProps) {
 
     const scrollRef = useRef<HTMLDivElement>(null);
@@ -78,9 +81,12 @@ export default function HomeScene({
                         />
                     </div>
 
-                    {/* SCENE II: OPPORTUNITIES STREAM */}
-                    <Section3D className="z-10 bg-transparent min-h-[60vh]">
-                        <OpportunityStream items={formattedOpportunities} />
+                    {/* SCENE II: ACTIVE STREAMS (Opportunities + Hackathons) */}
+                    <Section3D className="z-10 min-h-[50vh]">
+                        <ActiveStreams
+                            opportunities={formattedOpportunities}
+                            hackathons={hackathons}
+                        />
                     </Section3D>
 
                     {/* SCENE III: IMPACT & IDENTITY */}
@@ -101,6 +107,8 @@ export default function HomeScene({
                     <Section3D perspective={2000} className="z-20 min-h-screen">
                         <FeaturedWork projects={formattedProjects} />
                     </Section3D>
+
+
 
                     {/* SCENE VI: TOOLS & CAPABILITIES */}
                     <Section3D className="z-10 min-h-screen">

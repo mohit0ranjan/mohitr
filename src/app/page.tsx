@@ -21,7 +21,8 @@ export default async function Home() {
     postsCount,
     projectsCount,
     toolsCount,
-    opportunitiesCount
+    opportunitiesCount,
+    hackathons
   ] = await Promise.all([
     prisma.post.findMany({
       where: { isPublished: true },
@@ -70,7 +71,14 @@ export default async function Home() {
     prisma.post.count({ where: { isPublished: true } }),
     prisma.project.count(),
     prisma.devTool.count({ where: { isPublished: true } }),
-    prisma.opportunity.count()
+    prisma.opportunity.count(),
+    prisma.hackathon.findMany({
+      where: {
+        status: { in: ["Upcoming", "Open", "Live"] }
+      },
+      orderBy: { startDate: 'asc' },
+      take: 3
+    })
   ]);
 
   // Parse JSON content safely
@@ -83,6 +91,16 @@ export default async function Home() {
     date: post.publishedAt ? format(post.publishedAt, "MMM dd, yyyy") : "",
     title: post.title,
     excerpt: post.excerpt || undefined
+  }));
+
+  const formattedHackathons = hackathons.map(h => ({
+    ...h,
+    tags: h.tags ? h.tags.split(',').map(t => t.trim()) : [],
+    startDate: h.startDate.toISOString(),
+    endDate: h.endDate.toISOString(),
+    registrationDeadline: h.registrationDeadline ? h.registrationDeadline.toISOString() : null,
+    createdAt: h.createdAt.toISOString(),
+    updatedAt: h.updatedAt.toISOString(),
   }));
 
   const formattedProjects = projects.map(proj => ({
@@ -99,6 +117,8 @@ export default async function Home() {
     title: job.title,
     company: job.company,
     type: job.type,
+    status: job.status,
+    slug: job.slug,
     location: job.location || "Remote",
     link: `/opportunities/${job.slug}`,
     isNew: true, // Could compare date difference
@@ -136,6 +156,7 @@ export default async function Home() {
       timelineItems={timelineItems}
       formattedGalleryItems={formattedGalleryItems}
       formattedPosts={formattedPosts}
+      hackathons={formattedHackathons}
     />
   );
 }

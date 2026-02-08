@@ -6,7 +6,7 @@ interface MetricItem {
     id: string;
     label: string;
     value: number;
-    icon: React.ElementType;
+    icon: React.ElementType<{ size?: number | string; className?: string }>;
     color: string;
 }
 
