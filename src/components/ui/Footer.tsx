@@ -1,10 +1,16 @@
 
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { ArrowUpRight, Github, Linkedin, Twitter, Mail } from "lucide-react";
 
 export default function Footer() {
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
     return (
         <footer className="relative bg-[#020202] border-t border-white/5 pt-32 pb-12 overflow-hidden">
 
@@ -89,7 +95,7 @@ export default function Footer() {
                             <span className="text-emerald-400 font-medium">All Systems Normal</span>
                         </div>
                         <p className="text-neutral-500 text-sm">
-                            Last deploy: {new Date().toLocaleDateString()}
+                            Last deploy: {mounted ? new Date().toLocaleDateString() : '...'}
                         </p>
                     </div>
 
