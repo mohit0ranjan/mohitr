@@ -1,6 +1,6 @@
 "use server";
 
-import { JSDOM } from "jsdom";
+import * as cheerio from "cheerio";
 
 export async function fetchEventDetails(url: string) {
     if (!url) return null;
@@ -20,19 +20,17 @@ export async function fetchEventDetails(url: string) {
         }
 
         const html = await response.text();
-        const dom = new JSDOM(html);
-        const doc = dom.window.document;
+        const $ = cheerio.load(html);
 
         // --- 1. Basic Metadata (Always reliable) ---
-        const title = doc.querySelector("meta[property='og:title']")?.getAttribute("content")
-            || doc.querySelector("title")?.textContent
+        const title = $("meta[property='og:title']").attr("content")
+            || $("title").text()
             || "";
 
-        const image = doc.querySelector("meta[property='og:image']")?.getAttribute("content") || "";
-        const siteName = doc.querySelector("meta[property='og:site_name']")?.getAttribute("content") || "Unstop";
+        const image = $("meta[property='og:image']").attr("content") || "";
+        const siteName = $("meta[property='og:site_name']").attr("content") || "Unstop";
 
         // --- 2. Advanced: JSON-LD Structured Data (Best Source for Dates) ---
-        // Unstop often embeds Event or EducationalOccupationalCredential schema
         let startDateStr = "";
         let endDateStr = "";
         let locationStr = "";
@@ -40,10 +38,9 @@ export async function fetchEventDetails(url: string) {
         let organizerStr = "";
 
         // Attempt 1: Check all JSON-LD scripts
-        const scriptTags = doc.querySelectorAll('script[type="application/ld+json"]');
-        for (const script of scriptTags) {
+        $('script[type="application/ld+json"]').each((_, script) => {
             try {
-                const data = JSON.parse(script.textContent || "{}");
+                const data = JSON.parse($(script).text() || "{}");
 
                 // Handle single object or array/graph
                 const items = Array.isArray(data) ? data : (data['@graph'] || [data]);
@@ -58,27 +55,15 @@ export async function fetchEventDetails(url: string) {
                     }
                 }
             } catch (e) { /* ignore parse errors */ }
-        }
+        });
 
         // --- 3. DOM Scraping (Unstop Specific Fallbacks) ---
-
-        // Dates often in distinct containers
-        // Look for typical Unstop date text patterns if JSON-LD fails
-        if (!startDateStr) {
-            // Heuristic: Search for elements containing date-like strings near "Registration Deadline" or "Hackathon Dates" headers
-            // This is fragile, so we prefer to leave blank if unsure rather than guessing wrong dates.
-        }
-
-        // Description from DOM if JSON-LD missing
         if (!descriptionStr) {
-            // Unstop usually puts description in specific divs
-            // Try common selectors
-            const descEl = doc.querySelector('.description_content') || doc.querySelector('#details .content');
-            if (descEl) descriptionStr = descEl.textContent || "";
+            const descEl = $('.description_content').first().length ? $('.description_content').first() : $('#details .content').first();
+            if (descEl.length) descriptionStr = descEl.text() || "";
         }
 
         // --- 4. Logic to only return what we found ---
-
         const result: any = {
             website: url,
             imageUrl: image,
@@ -111,7 +96,7 @@ export async function fetchEventDetails(url: string) {
             result.description = descriptionStr.slice(0, 1000).trim(); // Limit length
         } else {
             // Fallback to OG Description
-            const ogDesc = doc.querySelector("meta[property='og:description']")?.getAttribute("content");
+            const ogDesc = $("meta[property='og:description']").attr("content");
             if (ogDesc) result.description = ogDesc;
         }
 
@@ -122,3 +107,4 @@ export async function fetchEventDetails(url: string) {
         return null;
     }
 }
+

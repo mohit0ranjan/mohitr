@@ -1,4 +1,4 @@
-import { JSDOM } from "jsdom";
+import * as cheerio from "cheerio";
 
 export async function scrapeUnstop(url: string) {
     try {
@@ -13,52 +13,48 @@ export async function scrapeUnstop(url: string) {
         }
 
         const html = await response.text();
-        const dom = new JSDOM(html);
-        const doc = dom.window.document;
+        const $ = cheerio.load(html);
 
         // --- Extract Data (These selectors are approximate based on Unstop's structure) ---
 
         // 1. Title
-        const title = doc.querySelector("h1")?.textContent?.trim() || "";
+        const title = $("h1").first().text().trim() || "";
 
         // 2. Organizer
-        const organizer = doc.querySelector(".org-name")?.textContent?.trim() || "Unstop";
+        const organizer = $(".org-name").first().text().trim() || "Unstop";
 
         // 3. Location & Mode
-        // Unstop usually puts this in meta tags or specific classes
-        const mode = doc.querySelector(".mode-tag")?.textContent?.trim() || "Online"; // Heuristic
+        const mode = $(".mode-tag").first().text().trim() || "Online"; // Heuristic
         const location = mode.toLowerCase().includes("online") ? undefined : "See details";
 
         // 4. Dates
-        // Dates are tricky without an API, often in specific consistent divs
-        const startDateMeta = doc.querySelector("meta[itemprop='startDate']")?.getAttribute("content");
-        const endDateMeta = doc.querySelector("meta[itemprop='endDate']")?.getAttribute("content");
+        const startDateMeta = $("meta[itemprop='startDate']").attr("content");
+        const endDateMeta = $("meta[itemprop='endDate']").attr("content");
 
         const startDate = startDateMeta ? new Date(startDateMeta) : new Date();
         const endDate = endDateMeta ? new Date(endDateMeta) : new Date(Date.now() + 86400000 * 2); // Default +2 days
 
         // 5. Description
-        const description = doc.querySelector(".description-content")?.textContent?.slice(0, 300) + "..." || "";
+        const description = $(".description-content").first().text().slice(0, 300) + "..." || "";
 
         // 6. Tags
-        // Often in a 'tags' section
-        const tags = Array.from(doc.querySelectorAll(".tags-section .tag")).map(t => t.textContent?.trim()).join(", ") || "Hackathon";
+        const tags = $(".tags-section .tag").map((_, t) => $(t).text().trim()).get().join(", ") || "Hackathon";
 
         // 7. Image
-        const imageUrl = doc.querySelector("meta[property='og:image']")?.getAttribute("content") || "";
+        const imageUrl = $("meta[property='og:image']").attr("content") || "";
 
         return {
             name: title,
             organizer,
-            website: url, // The original link
+            website: url,
             location: location || "",
             mode: mode.includes("Online") ? "Online" : "Offline",
             startDate: startDate.toISOString(),
             endDate: endDate.toISOString(),
-            registrationDeadline: startDate.toISOString(), // Heuristic
+            registrationDeadline: startDate.toISOString(),
             description,
             tags,
-            status: "Open", // Default to Open if fetched successfully
+            status: "Open",
             slug: title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, ""),
             imageUrl
         };
@@ -70,12 +66,10 @@ export async function scrapeUnstop(url: string) {
 }
 
 export async function scrapeLinkedIn(url: string) {
-    // LinkedIn scraping is notoriously hard due to auth walls.
-    // We will extract basic OpenGraph metadata which is often public.
     try {
         const response = await fetch(url, {
             headers: {
-                "User-Agent": "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)" // Pretend to be a bot
+                "User-Agent": "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)"
             }
         });
 
@@ -84,19 +78,18 @@ export async function scrapeLinkedIn(url: string) {
         }
 
         const html = await response.text();
-        const dom = new JSDOM(html);
-        const doc = dom.window.document;
+        const $ = cheerio.load(html);
 
-        const title = doc.querySelector("meta[property='og:title']")?.getAttribute("content") || "LinkedIn Event";
-        const description = doc.querySelector("meta[property='og:description']")?.getAttribute("content") || "";
-        const imageUrl = doc.querySelector("meta[property='og:image']")?.getAttribute("content") || "";
+        const title = $("meta[property='og:title']").attr("content") || "LinkedIn Event";
+        const description = $("meta[property='og:description']").attr("content") || "";
+        const imageUrl = $("meta[property='og:image']").attr("content") || "";
 
         return {
             name: title,
             organizer: "LinkedIn",
             website: url,
             location: "See LinkedIn",
-            mode: "Online", // Default
+            mode: "Online",
             startDate: new Date().toISOString(),
             endDate: new Date(Date.now() + 86400000).toISOString(),
             registrationDeadline: new Date().toISOString(),
@@ -112,3 +105,4 @@ export async function scrapeLinkedIn(url: string) {
         return null;
     }
 }
+
