@@ -6,14 +6,23 @@ import { MotionValue } from "framer-motion";
 import * as THREE from "three";
 import { Points, PointMaterial } from "@react-three/drei";
 
-function ParticleField() {
+function ParticleField({ scrollYProgress }: { scrollYProgress: MotionValue<number> }) {
+    const groupRef = useRef<THREE.Group>(null);
+
+    useFrame(() => {
+        if (!groupRef.current) return;
+        // Subtle vertical movement based on scroll
+        const scroll = scrollYProgress.get();
+        groupRef.current.position.y = -scroll * 10;
+    });
+
     return (
-        <group>
+        <group ref={groupRef}>
             {/* Subtle distant starfield for depth */}
             <Stars count={3000} radius={150} />
 
             {/* Interactive nearby particles */}
-            <InteractiveParticles count={150} />
+            <InteractiveParticles count={80} />
         </group>
     );
 }
@@ -60,92 +69,92 @@ function Stars({ count = 5000, radius = 100 }) {
     );
 }
 
-function InteractiveParticles({ count = 100 }) {
-    const mesh = useRef<THREE.InstancedMesh>(null);
+function InteractiveParticles({ count = 80 }) {
+    const points = useRef<THREE.Points>(null);
     const { viewport, mouse } = useThree();
 
-    // Create random initial positions for particles
-    const dummy = useMemo(() => new THREE.Object3D(), []);
-    const particles = useMemo(() => {
+    const [positions, particles] = useMemo(() => {
+        const pos = new Float32Array(count * 3);
         const temp = [];
-        const width = viewport.width * 2; // Spread wider than screen
+        const width = viewport.width * 2;
         const height = viewport.height * 2;
 
         for (let i = 0; i < count; i++) {
-            const t = Math.random() * 100;
-            const factor = 20 + Math.random() * 100;
-            const speed = 0.01 + Math.random() / 200;
             const x = (Math.random() - 0.5) * width;
             const y = (Math.random() - 0.5) * height;
-            const z = (Math.random() - 0.5) * 20; // Some depth
+            const z = (Math.random() - 0.5) * 10;
 
-            temp.push({ t, factor, speed, x, y, z, originalX: x, originalY: y, originalZ: z });
+            pos[i * 3] = x;
+            pos[i * 3 + 1] = y;
+            pos[i * 3 + 2] = z;
+
+            temp.push({
+                t: Math.random() * 100,
+                speed: 0.01 + Math.random() / 200,
+                originalX: x,
+                originalY: y,
+                z: z
+            });
         }
-        return temp;
+        return [pos, temp];
     }, [count, viewport]);
 
     useFrame((state) => {
-        if (!mesh.current) return;
+        if (!points.current) return;
+        const posAttr = points.current.geometry.attributes.position;
 
         particles.forEach((particle, i) => {
-            let { t, speed, x, y, z, originalX, originalY } = particle;
+            particle.t += particle.speed;
+            const driftX = Math.cos(particle.t) * 0.2;
+            const driftY = Math.sin(particle.t) * 0.2;
 
-            // Natural easy drift
-            t = particle.t += speed;
-            const driftX = Math.cos(t) * 0.5;
-            const driftY = Math.sin(t) * 0.5;
-
-            // Mouse interaction (repel)
             const mouseX = (mouse.x * viewport.width) / 2;
             const mouseY = (mouse.y * viewport.height) / 2;
 
-            // Calculate distance to mouse
-            const dx = (originalX + driftX) - mouseX;
-            const dy = (originalY + driftY) - mouseY;
+            const dx = (particle.originalX + driftX) - mouseX;
+            const dy = (particle.originalY + driftY) - mouseY;
             const dist = Math.sqrt(dx * dx + dy * dy);
 
             let repelX = 0;
             let repelY = 0;
-
-            if (dist < 4) {
-                const force = (4 - dist) / 4;
-                repelX = dx * force * 0.5;
-                repelY = dy * force * 0.5;
+            if (dist < 3) {
+                const force = (3 - dist) / 3;
+                repelX = dx * force * 0.3;
+                repelY = dy * force * 0.3;
             }
 
-            dummy.position.set(
-                originalX + driftX + repelX,
-                originalY + driftY + repelY,
-                z
+            posAttr.setXYZ(
+                i,
+                particle.originalX + driftX + repelX,
+                particle.originalY + driftY + repelY,
+                particle.z
             );
-
-            // Subtle pulse
-            const s = 0.5 + Math.abs(Math.sin(t * 2)) * 0.5;
-            dummy.scale.set(s, s, s);
-
-            dummy.updateMatrix();
-            mesh.current!.setMatrixAt(i, dummy.matrix);
         });
 
-        mesh.current.instanceMatrix.needsUpdate = true;
+        posAttr.needsUpdate = true;
     });
 
     return (
-        <instancedMesh ref={mesh} args={[undefined, undefined, count]}>
-            <sphereGeometry args={[0.03, 16, 16]} />
-            <meshBasicMaterial color="#94a3b8" transparent opacity={0.6} /> {/* Slate-400 */}
-        </instancedMesh>
+        <Points ref={points} positions={positions} stride={3}>
+            <PointMaterial
+                transparent
+                color="#94a3b8"
+                size={0.15}
+                sizeAttenuation={true}
+                depthWrite={false}
+                opacity={0.6}
+            />
+        </Points>
     );
 }
 
 export default function Background3D({ scrollYProgress }: { scrollYProgress: MotionValue<number> }) {
     return (
         <div className="fixed inset-0 -z-10 h-full w-full bg-[#050505]">
-            <Canvas camera={{ position: [0, 0, 10], fov: 60 }} gl={{ antialias: true, alpha: false }}>
+            <Canvas camera={{ position: [0, 0, 10], fov: 60 }} gl={{ antialias: false, alpha: false, powerPreference: "high-performance" }}>
                 <Suspense fallback={null}>
-                    {/* Add fog for depth fading */}
                     <fog attach="fog" args={['#050505', 10, 50]} />
-                    <ParticleField />
+                    <ParticleField scrollYProgress={scrollYProgress} />
                 </Suspense>
             </Canvas>
 

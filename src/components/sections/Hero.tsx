@@ -31,7 +31,6 @@ export default function HeroProp({ content, settings, ticker }: any) {
             opacity: 0,
             y: 40,
             scale: 0.96,
-            filter: "linear-gradient(rgba(0,0,0,1), rgba(0,0,0,1))", // Trick to force GPU
         },
         visible: {
             opacity: 1,
@@ -62,7 +61,7 @@ export default function HeroProp({ content, settings, ticker }: any) {
             transition: {
                 duration: 8,
                 repeat: Infinity,
-                ease: "linear" // Linear for float can be jittery, easeInOut is better
+                ease: "easeInOut"
             }
         }
     };
@@ -117,7 +116,7 @@ export default function HeroProp({ content, settings, ticker }: any) {
                 <div className="xl:w-1/3 flex flex-col items-center xl:items-start relative z-50 order-1 xl:order-1 w-full sm:w-auto">
                     <motion.div
                         variants={cardEntrance}
-                        className="w-full sm:w-[380px] p-6 sm:p-8 rounded-[2rem] bg-neutral-900/40 backdrop-blur-xl border border-white/5 shadow-2xl flex flex-col items-center xl:items-start text-center xl:text-left gap-4 group hover:border-emerald-500/20 transition-all duration-500 relative overflow-hidden"
+                        className="w-full sm:w-[380px] p-6 sm:p-8 rounded-[2rem] bg-neutral-900/40 backdrop-blur-md border border-white/5 shadow-2xl flex flex-col items-center xl:items-start text-center xl:text-left gap-4 group hover:border-emerald-500/20 transition-all duration-500 relative overflow-hidden"
                     >
                         <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
 

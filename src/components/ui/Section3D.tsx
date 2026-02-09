@@ -44,7 +44,7 @@ export function Section3D({
                     transformStyle: "preserve-3d",
                     backfaceVisibility: "hidden"
                 }}
-                className="transform-gpu w-full h-full will-change-transform"
+                className="transform-gpu w-full h-full"
             >
                 {children}
             </motion.div>
